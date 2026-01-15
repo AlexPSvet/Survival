@@ -1,0 +1,106 @@
+# Messages Configuration
+# Use & for color codes
+
+# Server branding
+server:
+  name: "&6&lPERIQUITO"
+  prefix: "&8[&6Periquito&8]&r "
+
+# Welcome Messages
+welcome:
+  join: |
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    &6&l✦ &e{player} &7vient de rejoindre l'aventure! &6&l✦
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  first-join: |
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    &6&l⭐ BIENVENUE SUR PERIQUITO! ⭐
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    &e{player} &7découvre le serveur pour la première fois!
+    &aSouhaitez-lui la bienvenue! &6&l♡
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  quit: "&7[&c-&7] &e{player} &7s'est déconnecté"
+
+# Clan Messages
+clan:
+  created: |
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    &6&l⚔ CLAN CRÉÉ AVEC SUCCÈS! ⚔
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    &7Nom du Clan: &e&l{clan}
+    &7Tag: &6&l[{tag}]
+    &7Chef: &e{leader}
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    &aVotre clan est maintenant opérationnel!
+    &7Recrutez des membres avec &e/clan invite <joueur>
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  member-join: |
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    &a&l✦ NOUVEAU MEMBRE! ✦
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    &e{player} &aa rejoint le clan &e&l{clan}&a!
+    &7Membres actuels: &e{count}&7/&e{max}
+    &7Souhaitez la bienvenue à votre nouveau compagnon!
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  disbanded: |
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    &c&l⚠ CLAN DISSOUS ⚠
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    &7Le clan &c&l{clan} &7n'existe plus...
+    &7Tous les membres ont été libérés.
+    &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Private Messages
+private-message:
+  format: "&d[&5MP&d] &e{from} &7→ &e{to}&7: &f{message}"
+  format-sender: "&d[&5MP&d] &7Moi &7→ &e{to}&7: &f{message}"
+  format-receiver: "&d[&5MP&d] &e{from} &7→ &7Moi&7: &f{message}"
+  no-reply: "&cVous n'avez personne à qui répondre!"
+  offline: "&cCe joueur n'est pas en ligne!"
+  self: "&cVous ne pouvez pas vous envoyer de message!"
+
+# Public Chat
+chat:
+  format: "&7{player}&8: &f{message}"
+  format-clan: "&6[{tag}] &7{player}&8: &f{message}"
+  muted: "&cVous avez désactivé le chat!"
+  toggled-on: "&aChat activé!"
+  toggled-off: "&cChat désactivé!"
+
+# Auction House
+auction:
+  listed: |
+    &a&l✓ Article mis en vente!
+    &7Vous vendez &e{item} &7pour &6{price} {currency}
+    &7Expire dans &e48 heures
+  bought: |
+    &a&l✓ Achat réussi!
+    &7Vous avez acheté &e{item} &7pour &6{price} {currency}
+  sold: |
+    &6&l⭐ Vente réussie!
+    &7Votre &e{item} &7a été vendu pour &6{price} {currency}
+  expired: "&c&l✗ Votre vente de &e{item} &ca expiré et a été retournée!"
+  cancelled: "&e&l➜ Vente annulée! L'article vous a été retourné"
+  no-money: "&c&l✗ Fonds insuffisants!"
+  full-inventory: "&c&l✗ Inventaire plein!"
+
+# Shop Messages  
+shop:
+  purchased: |
+    &a&l✓ Achat effectué!
+    &7Article: &e{item} &7x&e{amount}
+    &7Prix: &6{price} {currency}
+  insufficient-funds: "&c&l✗ Vous n'avez pas assez d'argent! &7(&e{price} {currency} &7requis)"
+
+# Territory Protection
+territory:
+  created: "&aZone protégée créée! &7({size} blocs)"
+  removed: "&cZone protégée supprimée!"
+  cannot-build: "&cVous ne pouvez pas construire ici!"
+  cannot-break: "&cVous ne pouvez pas détruire ici!"
+  cannot-interact: "&cVous ne pouvez pas interagir ici!"
+  claimed: "&aTerritory réclamé pour le clan &e{clan}&a!"
+  unclaimed: "&cTerritory libéré!"
+  already-claimed: "&cCe territoire est déjà réclamé!"
+  not-in-clan: "&cVous devez être dans un clan!"
+  no-permission: "&cVous n'avez pas la permission dans cette zone!"
