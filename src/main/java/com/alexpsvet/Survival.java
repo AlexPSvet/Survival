@@ -3,6 +3,8 @@ package com.alexpsvet;
 import java.util.logging.Logger;
 import java.io.File;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.alexpsvet.utils.MessageUtil;
 import com.alexpsvet.utils.menu.MenuListener;
 import com.alexpsvet.utils.menu.MenuManager;
 import com.alexpsvet.database.Database;
@@ -83,6 +85,7 @@ public class Survival extends JavaPlugin {
     
     // Initialize managers
     economyManager = new EconomyManager(database);
+    shopManager = new ShopManager();
     clanManager = new ClanManager(database);
     clanWarManager = new ClanWarManager(database);
     chatManager = new ChatManager();
@@ -90,7 +93,6 @@ public class Survival extends JavaPlugin {
     territoryManager = new TerritoryManager(database);
     statsManager = new PlayerStatsManager(database);
     teleportManager = new TeleportManager();
-    shopManager = new ShopManager();
     bountyManager = new BountyManager(database);
     jobsManager = new JobsManager(database);
     scoreboardManager = new ScoreboardManager();
@@ -155,7 +157,7 @@ public class Survival extends JavaPlugin {
     
     // Set server motd from config
     String motd = getConfig().getString("server.motd", "Welcome to the Survival Server!");
-    getServer().setMotd(motd);
+    getServer().setMotd(MessageUtil.colorize(motd));
 
     // Start salary task if enabled
     if (getConfig().getBoolean("economy.salary.enabled", true)) {

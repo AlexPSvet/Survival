@@ -28,9 +28,9 @@ public class ShopMenu {
     private final Menu shopMenu;
     private final HashMap<String, Menu> categoryMenu;
 
-    public ShopMenu() {
+    public ShopMenu(Collection<ShopCategory> categories) {
         this.shopMenu = createShopMenu();
-        this.categoryMenu = createCategoryMenus();
+        this.categoryMenu = createCategoryMenus(categories);
     }
 
     public Menu createShopMenu() {
@@ -76,9 +76,8 @@ public class ShopMenu {
         return builder.build();
     }
 
-    public HashMap<String, Menu> createCategoryMenus() {
+    public HashMap<String, Menu> createCategoryMenus(Collection<ShopCategory> categories) {
         HashMap<String, Menu> categoryMenus = new HashMap<>();
-        Collection<ShopCategory> categories = Survival.getInstance().getShopManager().getCategories().values();
 
         for (ShopCategory category : categories) {
             Menu.Builder builder = new Menu.Builder()
@@ -104,8 +103,8 @@ public class ShopMenu {
                     lore.add(MessageUtil.colorize("&7Prix: &e" + shopItem.getPrice() + " " + currency));
                     lore.add(MessageUtil.colorize("&7Quantité: &ex" + shopItem.getAmount()));
                     lore.add("");
-                    lore.add(MessageUtil.colorize("&aClick gauche: &fAcheter x1"));
-                    lore.add(MessageUtil.colorize("&aClick droit: &fAcheter x32"));
+                    lore.add(MessageUtil.colorize("&aClick gauche: &fAcheter x64"));
+                    lore.add(MessageUtil.colorize("&aClick droit: &fAcheter x128"));
                     meta.setLore(lore);
                     item.setItemMeta(meta);
                 }
@@ -115,8 +114,8 @@ public class ShopMenu {
                     .slot(slot++)
                     .item(item)
                     .onClick((p, clickType) -> {
-                        int amount = clickType == ClickType.RIGHT ? 32 : 1;
-                        buyItem(p, finalItem, amount);
+                        int amountStacks = clickType == ClickType.RIGHT ? 2 : 1;
+                        buyItem(p, finalItem, amountStacks);
                     })
                     .build());
             }
@@ -158,11 +157,11 @@ public class ShopMenu {
     /**
      * Buy an item from the shop
      */
-    private void buyItem(Player player, ShopItem shopItem, int amount) {
+    private void buyItem(Player player, ShopItem shopItem, int amountStacks) {
         EconomyManager eco = Survival.getInstance().getEconomyManager();
         String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
         
-        double totalPrice = shopItem.getPrice() * amount;
+        double totalPrice = shopItem.getPrice() * amountStacks;
         
         // Check balance
         if (eco.getBalance(player.getUniqueId()) < totalPrice) {
@@ -184,14 +183,14 @@ public class ShopMenu {
         
         // Give items
         ItemStack item = shopItem.createItemStack();
-        item.setAmount(amount);
+        item.setAmount(amountStacks * 64);
         player.getInventory().addItem(item);
         
         // Record transaction
         eco.addTransaction(player.getUniqueId(), TransactionType.SHOP_PURCHASE, -totalPrice, 
-            "Achat: " + shopItem.getDisplayName() + " x" + amount);
+            "Achat: " + shopItem.getDisplayName() + " x" + (amountStacks * 64));
         
-        MessageUtil.sendSuccess(player, "Vous avez acheté &e" + shopItem.getDisplayName() + " x" + amount + 
+        MessageUtil.sendSuccess(player, "Vous avez acheté &e" + shopItem.getDisplayName() + " x" + (amountStacks * 64) + 
             " &apour &e" + totalPrice + " " + currency);
     }
 }

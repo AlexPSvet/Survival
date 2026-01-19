@@ -1,0 +1,12 @@
+target/
+.github/
+.vscode/
+.idea/
+bin/
+build/
+out/
+logs/
+*.log
+*.tmp
+*.class
+*.jar

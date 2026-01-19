@@ -29,7 +29,7 @@ public class ShopManager {
         instance = this;
         this.categories = new HashMap<>();
         loadShopConfig();
-        this.shopMenu = new ShopMenu();
+        this.shopMenu = new ShopMenu(categories.values());
     }
     
     /**
