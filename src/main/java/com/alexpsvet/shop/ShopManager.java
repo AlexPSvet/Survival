@@ -1,6 +1,8 @@
 package com.alexpsvet.shop;
 
 import com.alexpsvet.Survival;
+import com.alexpsvet.shop.menu.ShopMenu;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,12 +21,15 @@ import java.util.logging.Logger;
 public class ShopManager {
     private static final Logger LOGGER = Logger.getLogger("survival");
     private static ShopManager instance;
+    
+    private final ShopMenu shopMenu;
     private final Map<String, ShopCategory> categories;
     
     public ShopManager() {
         instance = this;
         this.categories = new HashMap<>();
         loadShopConfig();
+        this.shopMenu = new ShopMenu();
     }
     
     /**
@@ -95,6 +100,13 @@ public class ShopManager {
      */
     public ShopCategory getCategory(String id) {
         return categories.get(id);
+    }
+
+    /**
+     * Get the shop menu
+     */
+    public ShopMenu getShopMenu() {
+        return shopMenu;
     }
     
     /**

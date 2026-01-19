@@ -16,21 +16,28 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Shop menu using the Menu system
  */
 public class ShopMenu {
-    
-    /**
-     * Open main shop menu
-     */
-    public static void openMainMenu(Player player) {
+
+    private final Menu shopMenu;
+    private final HashMap<String, Menu> categoryMenu;
+
+    public ShopMenu() {
+        this.shopMenu = createShopMenu();
+        this.categoryMenu = createCategoryMenus();
+    }
+
+    public Menu createShopMenu() {
         Menu.Builder builder = new Menu.Builder()
             .title(MessageUtil.colorize("&6&lBoutique Periquito"))
             .rows(6);
-        
+
         // Add categories
         for (ShopCategory category : ShopManager.getInstance().getCategories().values()) {
             ItemStack icon = new ItemStack(category.getIcon());
@@ -44,14 +51,14 @@ public class ShopMenu {
                 meta.setLore(lore);
                 icon.setItemMeta(meta);
             }
-            
+
             builder.button(new Button.Builder()
                 .slot(category.getSlot())
                 .item(icon)
-                .onClick((p, clickType) -> openCategoryMenu(p, category))
+                .onClick((p, clickType) -> openCategoryMenu(p, category.getId()))
                 .build());
         }
-        
+
         // Close button
         ItemStack close = new ItemStack(Material.BARRIER);
         ItemMeta closeMeta = close.getItemMeta();
@@ -59,91 +66,103 @@ public class ShopMenu {
             closeMeta.setDisplayName(MessageUtil.colorize("&cFermer"));
             close.setItemMeta(closeMeta);
         }
-        
+
         builder.button(new Button.Builder()
             .slot(49)
             .item(close)
             .onClick((p, clickType) -> p.closeInventory())
             .build());
-        
-        builder.build().open(player);
+
+        return builder.build();
+    }
+
+    public HashMap<String, Menu> createCategoryMenus() {
+        HashMap<String, Menu> categoryMenus = new HashMap<>();
+        Collection<ShopCategory> categories = Survival.getInstance().getShopManager().getCategories().values();
+
+        for (ShopCategory category : categories) {
+            Menu.Builder builder = new Menu.Builder()
+                .title(MessageUtil.colorize("&6&l" + category.getName()))
+                .rows(6);
+            
+            String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
+            
+            // Add items
+            int slot = 0;
+            for (ShopItem shopItem : category.getItems()) {
+                if (slot >= 45) break;
+                
+                ItemStack item = new ItemStack(shopItem.getMaterial(), shopItem.getAmount());
+                ItemMeta meta = item.getItemMeta();
+                if (meta != null) {
+                    meta.setDisplayName(MessageUtil.colorize(shopItem.getDisplayName()));
+                    List<String> lore = new ArrayList<>();
+                    for (String line : shopItem.getLore()) {
+                        lore.add(MessageUtil.colorize(line));
+                    }
+                    lore.add("");
+                    lore.add(MessageUtil.colorize("&7Prix: &e" + shopItem.getPrice() + " " + currency));
+                    lore.add(MessageUtil.colorize("&7Quantité: &ex" + shopItem.getAmount()));
+                    lore.add("");
+                    lore.add(MessageUtil.colorize("&aClick gauche: &fAcheter x1"));
+                    lore.add(MessageUtil.colorize("&aClick droit: &fAcheter x32"));
+                    meta.setLore(lore);
+                    item.setItemMeta(meta);
+                }
+                
+                final ShopItem finalItem = shopItem;
+                builder.button(new Button.Builder()
+                    .slot(slot++)
+                    .item(item)
+                    .onClick((p, clickType) -> {
+                        int amount = clickType == ClickType.RIGHT ? 32 : 1;
+                        buyItem(p, finalItem, amount);
+                    })
+                    .build());
+            }
+            
+            // Back button
+            ItemStack back = new ItemStack(Material.ARROW);
+            ItemMeta backMeta = back.getItemMeta();
+            if (backMeta != null) {
+                backMeta.setDisplayName(MessageUtil.colorize("&cRetour"));
+                back.setItemMeta(backMeta);
+            }
+            
+            builder.button(new Button.Builder()
+                .slot(49)
+                .item(back)
+                .onClick((p, clickType) -> openMainMenu(p))
+                .build());
+            
+            categoryMenus.put(category.getId(), builder.build());
+        }
+
+        return categoryMenus;
+    }
+
+    /**
+     * Open main shop menu
+     */
+    public void openMainMenu(Player player) {
+        this.shopMenu.open(player);
     }
     
     /**
      * Open category menu
      */
-    public static void openCategoryMenu(Player player, ShopCategory category) {
-        Menu.Builder builder = new Menu.Builder()
-            .title(MessageUtil.colorize("&6&l" + category.getName()))
-            .rows(6);
-        
-        String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
-        EconomyManager eco = Survival.getInstance().getEconomyManager();
-        
-        // Add items
-        int slot = 0;
-        for (ShopItem shopItem : category.getItems()) {
-            if (slot >= 45) break;
-            
-            // Check permission
-            if (shopItem.getPermission() != null && !player.hasPermission(shopItem.getPermission())) {
-                continue;
-            }
-            
-            ItemStack item = new ItemStack(shopItem.getMaterial(), shopItem.getAmount());
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName(MessageUtil.colorize(shopItem.getDisplayName()));
-                List<String> lore = new ArrayList<>();
-                for (String line : shopItem.getLore()) {
-                    lore.add(MessageUtil.colorize(line));
-                }
-                lore.add("");
-                lore.add(MessageUtil.colorize("&7Prix: &e" + shopItem.getPrice() + " " + currency));
-                lore.add(MessageUtil.colorize("&7Quantité: &ex" + shopItem.getAmount()));
-                lore.add("");
-                lore.add(MessageUtil.colorize("&aClick gauche: &fAcheter x1"));
-                lore.add(MessageUtil.colorize("&aClick droit: &fAcheter x64"));
-                meta.setLore(lore);
-                item.setItemMeta(meta);
-            }
-            
-            final ShopItem finalItem = shopItem;
-            builder.button(new Button.Builder()
-                .slot(slot++)
-                .item(item)
-                .onClick((p, clickType) -> {
-                    int multiplier = clickType == ClickType.RIGHT ? 64 : 1;
-                    buyItem(p, finalItem, multiplier);
-                })
-                .build());
-        }
-        
-        // Back button
-        ItemStack back = new ItemStack(Material.ARROW);
-        ItemMeta backMeta = back.getItemMeta();
-        if (backMeta != null) {
-            backMeta.setDisplayName(MessageUtil.colorize("&cRetour"));
-            back.setItemMeta(backMeta);
-        }
-        
-        builder.button(new Button.Builder()
-            .slot(49)
-            .item(back)
-            .onClick((p, clickType) -> openMainMenu(p))
-            .build());
-        
-        builder.build().open(player);
+    public void openCategoryMenu(Player player, String id) {
+        categoryMenu.get(id).open(player);
     }
     
     /**
      * Buy an item from the shop
      */
-    private static void buyItem(Player player, ShopItem shopItem, int multiplier) {
+    private void buyItem(Player player, ShopItem shopItem, int amount) {
         EconomyManager eco = Survival.getInstance().getEconomyManager();
         String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
         
-        double totalPrice = shopItem.getPrice() * multiplier;
+        double totalPrice = shopItem.getPrice() * amount;
         
         // Check balance
         if (eco.getBalance(player.getUniqueId()) < totalPrice) {
@@ -165,14 +184,14 @@ public class ShopMenu {
         
         // Give items
         ItemStack item = shopItem.createItemStack();
-        item.setAmount(shopItem.getAmount() * multiplier);
+        item.setAmount(amount);
         player.getInventory().addItem(item);
         
         // Record transaction
         eco.addTransaction(player.getUniqueId(), TransactionType.SHOP_PURCHASE, -totalPrice, 
-            "Achat: " + shopItem.getDisplayName() + " x" + multiplier);
+            "Achat: " + shopItem.getDisplayName() + " x" + amount);
         
-        MessageUtil.sendSuccess(player, "Vous avez acheté &e" + shopItem.getDisplayName() + " x" + multiplier + 
+        MessageUtil.sendSuccess(player, "Vous avez acheté &e" + shopItem.getDisplayName() + " x" + amount + 
             " &apour &e" + totalPrice + " " + currency);
     }
 }

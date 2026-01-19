@@ -257,7 +257,6 @@ public class AuctionManager {
      */
     private void startExpirationTask() {
         Bukkit.getScheduler().runTaskTimer(Survival.getInstance(), () -> {
-            long now = System.currentTimeMillis();
             List<AuctionListing> expired = new ArrayList<>();
             
             for (AuctionListing listing : listings.values()) {

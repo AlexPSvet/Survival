@@ -6,7 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.alexpsvet.utils.menu.MenuListener;
 import com.alexpsvet.utils.menu.MenuManager;
 import com.alexpsvet.database.Database;
-import com.alexpsvet.database.DatabaseType;
 import com.alexpsvet.economy.EconomyManager;
 import com.alexpsvet.economy.SalaryTask;
 import com.alexpsvet.clan.ClanManager;
@@ -17,6 +16,8 @@ import com.alexpsvet.territory.TerritoryManager;
 import com.alexpsvet.player.PlayerStatsManager;
 import com.alexpsvet.teleport.TeleportManager;
 import com.alexpsvet.shop.ShopManager;
+import com.alexpsvet.bounty.BountyManager;
+import com.alexpsvet.jobs.JobsManager;
 import com.alexpsvet.display.ScoreboardManager;
 import com.alexpsvet.display.TabManager;
 import com.alexpsvet.commands.EconomyCommand;
@@ -28,12 +29,17 @@ import com.alexpsvet.commands.ShopCommand;
 import com.alexpsvet.commands.ProtectionCommand;
 import com.alexpsvet.commands.GuideCommand;
 import com.alexpsvet.commands.ClanWarAdminCommand;
+import com.alexpsvet.commands.BountyCommand;
+import com.alexpsvet.commands.JobsCommand;
+import com.alexpsvet.commands.GambleCommand;
 import com.alexpsvet.listeners.PlayerJoinListener;
 import com.alexpsvet.listeners.ClanListener;
 import com.alexpsvet.listeners.ClanWarListener;
 import com.alexpsvet.listeners.ChatListener;
 import com.alexpsvet.listeners.TerritoryListener;
 import com.alexpsvet.listeners.StatsListener;
+import com.alexpsvet.bounty.BountyListener;
+import com.alexpsvet.jobs.JobsListener;
 
 /*
  * survival java plugin
@@ -51,6 +57,8 @@ public class Survival extends JavaPlugin {
   private PlayerStatsManager statsManager;
   private TeleportManager teleportManager;
   private ShopManager shopManager;
+  private BountyManager bountyManager;
+  private JobsManager jobsManager;
   private ScoreboardManager scoreboardManager;
   private TabManager tabManager;
   private SalaryTask salaryTask;
@@ -83,6 +91,8 @@ public class Survival extends JavaPlugin {
     statsManager = new PlayerStatsManager(database);
     teleportManager = new TeleportManager();
     shopManager = new ShopManager();
+    bountyManager = new BountyManager(database);
+    jobsManager = new JobsManager(database);
     scoreboardManager = new ScoreboardManager();
     tabManager = new TabManager();
     
@@ -94,6 +104,8 @@ public class Survival extends JavaPlugin {
     getServer().getPluginManager().registerEvents(new ChatListener(), this);
     getServer().getPluginManager().registerEvents(new TerritoryListener(), this);
     getServer().getPluginManager().registerEvents(new StatsListener(), this);
+    getServer().getPluginManager().registerEvents(new BountyListener(), this);
+    getServer().getPluginManager().registerEvents(new JobsListener(), this);
     
     // Register commands
     EconomyCommand economyCommand = new EconomyCommand();
@@ -132,9 +144,21 @@ public class Survival extends JavaPlugin {
     ClanWarAdminCommand warAdminCommand = new ClanWarAdminCommand();
     getCommand("waradmin").setExecutor(warAdminCommand);
     
+    BountyCommand bountyCommand = new BountyCommand();
+    getCommand("bounty").setExecutor(bountyCommand);
+    
+    JobsCommand jobsCommand = new JobsCommand();
+    getCommand("jobs").setExecutor(jobsCommand);
+    
+    GambleCommand gambleCommand = new GambleCommand();
+    getCommand("gamble").setExecutor(gambleCommand);
+    
+    // Set server motd from config
+    String motd = getConfig().getString("server.motd", "Welcome to the Survival Server!");
+    getServer().setMotd(motd);
+
     // Start salary task if enabled
     if (getConfig().getBoolean("economy.salary.enabled", true)) {
-      int intervalMinutes = getConfig().getInt("economy.salary.interval-minutes", 30);
       salaryTask = new SalaryTask(economyManager);
       // Run every minute to check for salary eligibility
       salaryTask.runTaskTimer(this, 20L * 60L, 20L * 60L);
@@ -294,5 +318,21 @@ public class Survival extends JavaPlugin {
    */
   public TabManager getTabManager() {
     return tabManager;
+  }
+
+  /**
+   * Get the bounty manager
+   * @return the bounty manager
+   */
+  public BountyManager getBountyManager() {
+    return bountyManager;
+  }
+
+  /**
+   * Get the jobs manager
+   * @return the jobs manager
+   */
+  public JobsManager getJobsManager() {
+    return jobsManager;
   }
 }

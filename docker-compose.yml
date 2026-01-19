@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  init-chown:
+    image: alpine:3.18
+    command: >
+      sh -c "
+      chown -R 1000:1000 /data || true &&
+      chmod -R 775 /data || true
+      "
+    volumes:
+      - ./data:/data
+    restart: "no"
+
+  mc:
+    image: eclipse-temurin:21-jdk-jammy
+    depends_on:
+      - init-chown
+    user: "1000:1000"
+    ports:
+      - "25565:25565"
+    volumes:
+      - "./data:/data"
+    working_dir: /data
+    environment:
+      XMS: "512M"
+      XMX: "1G"
+    command: >
+      sh -c "
+      printf 'eula=true' > /data/eula.txt &&
+      if [ ! -f /data/server.jar ]; then
+        echo 'ERROR: /data/server.jar not found';
+        exit 1;
+      fi &&
+      exec java -Xms$${XMS} -Xmx$${XMX} -jar /data/server.jar nogui
+      "
+    restart: unless-stopped

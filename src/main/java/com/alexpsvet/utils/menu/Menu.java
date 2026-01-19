@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,18 +19,30 @@ public class Menu implements InventoryHolder {
     private final int size;
     private final Inventory inventory;
     private final Map<Integer, Button> buttons;
+    private final Map<Integer, ItemStack> background;
     private final UUID menuId;
     
     private Menu(Builder builder) {
         this.title = builder.title;
         this.size = builder.size;
         this.buttons = builder.buttons;
+        this.background = builder.background;
         this.menuId = UUID.randomUUID();
+    
         this.inventory = Bukkit.createInventory(this, size, title);
         
         // Place all buttons in the inventory
         for (Button button : buttons.values()) {
             inventory.setItem(button.getSlot(), button.getItemStack());
+        }
+
+        // Fill background items
+        for (Map.Entry<Integer, ItemStack> entry : background.entrySet()) {
+            int slot = entry.getKey();
+            ItemStack itemStack = entry.getValue();
+            if (!buttons.containsKey(slot)) {
+                inventory.setItem(slot, itemStack);
+            }
         }
     }
     
@@ -113,6 +126,40 @@ public class Menu implements InventoryHolder {
         for (Button button : buttons.values()) {
             inventory.setItem(button.getSlot(), button.getItemStack());
         }
+        for (Map.Entry<Integer, ItemStack> entry : background.entrySet()) {
+            int slot = entry.getKey();
+            ItemStack itemStack = entry.getValue();
+            if (!buttons.containsKey(slot)) {
+                inventory.setItem(slot, itemStack);
+            }
+        }
+    }
+    
+    /**
+     * Update a specific slot with a new item
+     * @param slot the slot to update
+     * @param item the new item
+     */
+    public void updateSlot(int slot, ItemStack item) {
+        inventory.setItem(slot, item);
+    }
+    
+    /**
+     * Add or replace a button dynamically
+     * @param button the button to add
+     */
+    public void setButton(Button button) {
+        buttons.put(button.getSlot(), button);
+        inventory.setItem(button.getSlot(), button.getItemStack());
+    }
+    
+    /**
+     * Remove a button from a slot
+     * @param slot the slot to clear
+     */
+    public void removeButton(int slot) {
+        buttons.remove(slot);
+        inventory.setItem(slot, null);
     }
     
     @Override
@@ -127,6 +174,7 @@ public class Menu implements InventoryHolder {
         private String title = "Menu";
         private int size = 27; // Default to 3 rows
         private Map<Integer, Button> buttons = new HashMap<>();
+        private Map<Integer, ItemStack> background = new HashMap<>();
         
         /**
          * Set the title of the menu
@@ -185,6 +233,36 @@ public class Menu implements InventoryHolder {
         public Builder buttons(Button... buttons) {
             for (Button button : buttons) {
                 button(button);
+            }
+            return this;
+        }
+
+        /**
+         * Set background item for the menu
+         * @param slot the slot number
+         * @param itemStack the background item
+         * @return this builder
+         */
+        public Builder setBackgroundItem(int slot, ItemStack itemStack) {
+            if (slot < 0 || slot >= size) {
+                throw new IllegalArgumentException("Invalid slot " + slot + " for menu size " + size);
+            }
+            this.background.put(slot, itemStack);
+            return this;
+        }
+
+        /**
+         * Set a background item at specific slots
+         * @param itemStack the background item
+         * @param slotsToFill the slot numbers to fill with the background item
+         * @return this builder
+         */
+        public Builder backgroundItem(ItemStack itemStack, int... slotsToFill) {
+            for (int slot : slotsToFill) {
+                if (slot < 0 || slot >= size) {
+                    throw new IllegalArgumentException("Invalid slot " + slot + " for menu size " + size);
+                }
+                this.background.put(slot, itemStack);
             }
             return this;
         }

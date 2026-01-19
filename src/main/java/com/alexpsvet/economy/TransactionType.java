@@ -17,5 +17,10 @@ public enum TransactionType {
     SHOP_PURCHASE,
     AUCTION_PURCHASE,
     AUCTION_SALE,
+    BOUNTY_PLACE,
+    BOUNTY_CLAIM,
+    BOUNTY_REFUND,
+    JOB_REWARD,
+    GAMBLE,
     OTHER
 }

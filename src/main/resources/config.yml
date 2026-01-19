@@ -149,6 +149,25 @@ territory:
       cost: 10000.0
       radius: 50
 
+# Bounty Configuration
+bounty:
+  # Montant minimum pour une prime
+  minimum-amount: 100.0
+  
+  # Montant maximum pour une prime
+  maximum-amount: 100000.0
+
+# Gamble Configuration
+gamble:
+  # Activer/désactiver le système de jeu
+  enabled: true
+  
+  # Montant minimum pour parier
+  minimum-bet: 10.0
+  
+  # Montant maximum pour parier
+  maximum-bet: 50000.0
+
 # Messages
 messages:
   prefix: "&8[&6Survival&8]&r "

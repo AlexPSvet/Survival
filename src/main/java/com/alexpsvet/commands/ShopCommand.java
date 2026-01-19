@@ -1,5 +1,6 @@
 package com.alexpsvet.commands;
 
+import com.alexpsvet.Survival;
 import com.alexpsvet.shop.menu.ShopMenu;
 import com.alexpsvet.utils.MessageUtil;
 import org.bukkit.command.Command;
@@ -20,7 +21,7 @@ public class ShopCommand implements CommandExecutor {
         }
         
         Player player = (Player) sender;
-        ShopMenu.openMainMenu(player);
+        Survival.getInstance().getShopManager().getShopMenu().openMainMenu(player);
         return true;
     }
 }

@@ -3,7 +3,6 @@ package com.alexpsvet.territory;
 import com.alexpsvet.Survival;
 import com.alexpsvet.clan.Clan;
 import com.alexpsvet.clan.ClanManager;
-import com.alexpsvet.clan.ClanRank;
 import com.alexpsvet.database.Database;
 import org.bukkit.Location;
 import org.bukkit.block.Block;

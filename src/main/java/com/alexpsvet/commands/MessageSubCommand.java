@@ -1,6 +1,6 @@
 package com.alexpsvet.commands;
 
-import com.alexpsvet.Survival;
+import com.alexpsvet.commands.base.SubCommand;
 import com.alexpsvet.chat.ChatManager;
 import com.alexpsvet.utils.MessageUtil;
 import org.bukkit.Bukkit;
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Private message sub-command
  */
-public class MessageSubCommand extends com.alexpsvet.commands.base.SubCommand {
+public class MessageSubCommand extends SubCommand {
     
     @Override
     public String getName() {
