@@ -50,6 +50,16 @@ clan:
     &7Tous les membres ont été libérés.
     &8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+# Teleport
+teleport:
+  request-sent: "&aDemande de téléportation envoyée à &e{target}&a. En attente de sa réponse..."
+  request-received: |
+    &e{requester} &avous a demandé une téléportation.
+    &7Tapez &e/tp accept &7pour accepter ou &e/tp deny &7pour refuser.
+  accepted: "&aVotre demande de téléportation a été acceptée! Téléportation en cours..."
+  denied: "&cVotre demande de téléportation a été refusée."
+  cooldown: "&cVous devez attendre &e{time} &cavant de pouvoir envoyer une autre demande de téléportation."
+
 # Private Messages
 private-message:
   format: "&d[&5MP&d] &e{from} &7→ &e{to}&7: &f{message}"
@@ -104,3 +114,12 @@ territory:
   already-claimed: "&cCe territoire est déjà réclamé!"
   not-in-clan: "&cVous devez être dans un clan!"
   no-permission: "&cVous n'avez pas la permission dans cette zone!"
+  pvp-disabled: "&cLe PvP est désactivé dans ce territoire!"
+  # Display messages
+  enter-title: "&a&lZONE PROTÉGÉE"
+  enter-subtitle: "&7Propriétaire: &e{owner}"
+  exit-title: "&c&lSORTIE DE ZONE"
+  exit-subtitle: "&7Vous avez quitté la zone de &e{owner}"
+  bossbar: "&6⚔ &e{owner} &6⚔"
+  bossbar-player: "&e{owner}"
+  bossbar-clan: "&bClan {clan}"

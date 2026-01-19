@@ -15,6 +15,7 @@ import com.alexpsvet.clan.war.ClanWarManager;
 import com.alexpsvet.chat.ChatManager;
 import com.alexpsvet.auction.AuctionManager;
 import com.alexpsvet.territory.TerritoryManager;
+import com.alexpsvet.territory.TerritoryDisplayManager;
 import com.alexpsvet.player.PlayerStatsManager;
 import com.alexpsvet.teleport.TeleportManager;
 import com.alexpsvet.shop.ShopManager;
@@ -56,6 +57,7 @@ public class Survival extends JavaPlugin {
   private ChatManager chatManager;
   private AuctionManager auctionManager;
   private TerritoryManager territoryManager;
+  private TerritoryDisplayManager territoryDisplayManager;
   private PlayerStatsManager statsManager;
   private TeleportManager teleportManager;
   private ShopManager shopManager;
@@ -91,6 +93,7 @@ public class Survival extends JavaPlugin {
     chatManager = new ChatManager();
     auctionManager = new AuctionManager(database);
     territoryManager = new TerritoryManager(database);
+    territoryDisplayManager = new TerritoryDisplayManager(this, territoryManager);
     statsManager = new PlayerStatsManager(database);
     teleportManager = new TeleportManager();
     bountyManager = new BountyManager(database);
@@ -139,6 +142,7 @@ public class Survival extends JavaPlugin {
     
     ProtectionCommand protectionCommand = new ProtectionCommand();
     getCommand("protection").setExecutor(protectionCommand);
+    getCommand("protection").setTabCompleter(protectionCommand);
     
     GuideCommand guideCommand = new GuideCommand();
     getCommand("guide").setExecutor(guideCommand);
@@ -174,6 +178,11 @@ public class Survival extends JavaPlugin {
     // Save all player stats
     if (statsManager != null) {
       statsManager.saveAll();
+    }
+    
+    // Shutdown territory display manager
+    if (territoryDisplayManager != null) {
+      territoryDisplayManager.shutdown();
     }
     
     // Clear all open menus
@@ -336,5 +345,13 @@ public class Survival extends JavaPlugin {
    */
   public JobsManager getJobsManager() {
     return jobsManager;
+  }
+
+  /**
+   * Get the territory display manager
+   * @return the territory display manager
+   */
+  public TerritoryDisplayManager getTerritoryDisplayManager() {
+    return territoryDisplayManager;
   }
 }

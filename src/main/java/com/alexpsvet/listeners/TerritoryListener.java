@@ -7,12 +7,22 @@ import com.alexpsvet.territory.TerritoryManager;
 import com.alexpsvet.utils.MessageUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
@@ -115,6 +125,161 @@ public class TerritoryListener implements Listener {
                 MessageUtil.sendMessage(player, chatManager.getMessage("territory.cannot-interact"));
                 event.setCancelled(true);
             }
+        }
+    }
+    
+    /**
+     * Prevent explosions in protected territories
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
+        
+        event.blockList().removeIf(block -> {
+            Territory territory = territoryManager.getTerritoryAt(block.getLocation());
+            // Remove blocks from explosion if in protected territory and explosions are disabled
+            return territory != null && !territory.getFlags().isExplosions();
+        });
+    }
+    
+    /**
+     * Prevent block explosions (TNT, respawn anchors, etc.)
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockExplode(BlockExplodeEvent event) {
+        TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
+        
+        event.blockList().removeIf(block -> {
+            Territory territory = territoryManager.getTerritoryAt(block.getLocation());
+            return territory != null && !territory.getFlags().isExplosions();
+        });
+    }
+    
+    /**
+     * Prevent mob griefing (enderman, creepers changing blocks, etc.)
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+        TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
+        Territory territory = territoryManager.getTerritoryAt(event.getBlock().getLocation());
+        
+        if (territory == null) return;
+        
+        // Prevent enderman from picking up blocks
+        if (event.getEntity() instanceof Enderman && !territory.getFlags().isMobGriefing()) {
+            event.setCancelled(true);
+            return;
+        }
+        
+        // Prevent other mob griefing
+        if (!(event.getEntity() instanceof Player) && !territory.getFlags().isMobGriefing()) {
+            event.setCancelled(true);
+        }
+    }
+    
+    /**
+     * Prevent mob spawning in protected territories
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        // Allow natural spawning based on territory flag
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL ||
+            event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CHUNK_GEN) {
+            
+            TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
+            Territory territory = territoryManager.getTerritoryAt(event.getLocation());
+            
+            if (territory != null && !territory.getFlags().isMobSpawning()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+    
+    /**
+     * Prevent fire spread in protected territories
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockBurn(BlockBurnEvent event) {
+        TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
+        Territory territory = territoryManager.getTerritoryAt(event.getBlock().getLocation());
+        
+        if (territory != null && !territory.getFlags().isFireSpread()) {
+            event.setCancelled(true);
+        }
+    }
+    
+    /**
+     * Prevent fire ignition in protected territories
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockIgnite(BlockIgniteEvent event) {
+        // Allow players to ignite if they have permission
+        if (event.getPlayer() != null) {
+            TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
+            if (!territoryManager.canBuild(event.getPlayer().getUniqueId(), event.getBlock().getLocation())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+        
+        // Prevent natural fire spread
+        if (event.getCause() == BlockIgniteEvent.IgniteCause.SPREAD ||
+            event.getCause() == BlockIgniteEvent.IgniteCause.LAVA ||
+            event.getCause() == BlockIgniteEvent.IgniteCause.LIGHTNING) {
+            
+            TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
+            Territory territory = territoryManager.getTerritoryAt(event.getBlock().getLocation());
+            
+            if (territory != null && !territory.getFlags().isFireSpread()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+    
+    /**
+     * Prevent block spread (like fire, vines, etc.) in protected territories
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockSpread(BlockSpreadEvent event) {
+        TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
+        Territory territory = territoryManager.getTerritoryAt(event.getBlock().getLocation());
+        
+        if (territory != null && event.getSource().getType() == Material.FIRE && !territory.getFlags().isFireSpread()) {
+            event.setCancelled(true);
+        }
+    }
+    
+    /**
+     * Prevent liquid flow into protected territories
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockFromTo(BlockFromToEvent event) {
+        TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
+        Territory fromTerritory = territoryManager.getTerritoryAt(event.getBlock().getLocation());
+        Territory toTerritory = territoryManager.getTerritoryAt(event.getToBlock().getLocation());
+        
+        // Prevent flow from outside into protected territory or between different territories
+        if (toTerritory != null && (fromTerritory == null || !fromTerritory.equals(toTerritory))) {
+            event.setCancelled(true);
+        }
+    }
+    
+    /**
+     * Prevent PvP in protected territories
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerPvP(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player)) return;
+        if (!(event.getDamager() instanceof Player)) return;
+        
+        TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
+        Territory territory = territoryManager.getTerritoryAt(event.getEntity().getLocation());
+        
+        if (territory != null && !territory.getFlags().isPvp()) {
+            event.setCancelled(true);
+            ChatManager chatManager = ChatManager.getInstance();
+            MessageUtil.sendMessage((Player) event.getDamager(), 
+                chatManager.getMessage("territory.pvp-disabled"));
         }
     }
 }

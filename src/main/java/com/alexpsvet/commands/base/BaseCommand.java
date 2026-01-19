@@ -1,9 +1,11 @@
 package com.alexpsvet.commands.base;
 
+import com.alexpsvet.Survival;
 import com.alexpsvet.utils.MessageUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 public abstract class BaseCommand implements CommandExecutor, TabCompleter {
     
     private final List<SubCommand> subCommands = new ArrayList<>();
-    
+
     /**
      * Get the name of this command
      * @return the command name

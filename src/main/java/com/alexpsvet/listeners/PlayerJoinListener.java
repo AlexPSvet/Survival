@@ -5,6 +5,7 @@ import com.alexpsvet.display.ScoreboardManager;
 import com.alexpsvet.display.TabManager;
 import com.alexpsvet.economy.EconomyManager;
 import com.alexpsvet.player.PlayerStatsManager;
+import com.alexpsvet.territory.TerritoryDisplayManager;
 import com.alexpsvet.utils.MessageUtil;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,8 +13,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataType;
 
 /**
  * Listener for player join events
@@ -94,6 +99,9 @@ public class PlayerJoinListener implements Listener {
         Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
         FireworkMeta meta = firework.getFireworkMeta();
         
+        // Mark as welcome firework (won't cause damage)
+        firework.setMetadata("welcome_firework", new FixedMetadataValue(Survival.getInstance(), true));
+        
         // Create random firework effect
         FireworkEffect.Builder effectBuilder = FireworkEffect.builder();
         effectBuilder.with(FireworkEffect.Type.BALL_LARGE);
@@ -110,5 +118,30 @@ public class PlayerJoinListener implements Listener {
         meta.setPower(1);
         
         firework.setFireworkMeta(meta);
+    }
+    
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        // Clean up territory display manager data
+        TerritoryDisplayManager territoryDisplayManager = Survival.getInstance().getTerritoryDisplayManager();
+        if (territoryDisplayManager != null) {
+            territoryDisplayManager.onPlayerQuit(event.getPlayer());
+        }
+    }
+    
+    /**
+     * Prevent damage from welcome fireworks
+     */
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        // Check if damage is caused by a firework
+        if (event.getDamager() instanceof Firework) {
+            Firework firework = (Firework) event.getDamager();
+            
+            // Check if it's a welcome firework
+            if (firework.hasMetadata("welcome_firework")) {
+                event.setCancelled(true);
+            }
+        }
     }
 }

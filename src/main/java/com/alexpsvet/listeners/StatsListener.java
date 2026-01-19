@@ -1,7 +1,6 @@
 package com.alexpsvet.listeners;
 
 import com.alexpsvet.display.ScoreboardManager;
-import com.alexpsvet.display.TabManager;
 import com.alexpsvet.player.PlayerStatsManager;
 import com.alexpsvet.player.PlayerStats;
 import org.bukkit.entity.Player;

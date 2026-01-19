@@ -1,7 +1,6 @@
 package com.alexpsvet.commands;
 
 import com.alexpsvet.Survival;
-import com.alexpsvet.shop.menu.ShopMenu;
 import com.alexpsvet.utils.MessageUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

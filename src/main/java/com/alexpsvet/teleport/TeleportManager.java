@@ -1,6 +1,8 @@
 package com.alexpsvet.teleport;
 
 import com.alexpsvet.Survival;
+import com.alexpsvet.utils.MessageUtil;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -31,6 +33,7 @@ public class TeleportManager {
         // Check cooldown
         if (isOnCooldown(requester.getUniqueId())) {
             long remaining = getCooldownRemaining(requester.getUniqueId());
+            requester.sendMessage(MessageUtil.colorize("&cVous devez attendre " + remaining + " seconde(s) avant d'envoyer une nouvelle demande de téléportation."));
             return false;
         }
         
