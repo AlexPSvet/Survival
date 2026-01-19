@@ -21,6 +21,7 @@ import com.alexpsvet.teleport.TeleportManager;
 import com.alexpsvet.shop.ShopManager;
 import com.alexpsvet.bounty.BountyManager;
 import com.alexpsvet.jobs.JobsManager;
+import com.alexpsvet.home.HomeManager;
 import com.alexpsvet.display.ScoreboardManager;
 import com.alexpsvet.display.TabManager;
 import com.alexpsvet.commands.EconomyCommand;
@@ -35,6 +36,7 @@ import com.alexpsvet.commands.ClanWarAdminCommand;
 import com.alexpsvet.commands.BountyCommand;
 import com.alexpsvet.commands.JobsCommand;
 import com.alexpsvet.commands.GambleCommand;
+import com.alexpsvet.commands.HomeCommand;
 import com.alexpsvet.listeners.PlayerJoinListener;
 import com.alexpsvet.listeners.ClanListener;
 import com.alexpsvet.listeners.ClanWarListener;
@@ -63,6 +65,7 @@ public class Survival extends JavaPlugin {
   private ShopManager shopManager;
   private BountyManager bountyManager;
   private JobsManager jobsManager;
+  private HomeManager homeManager;
   private ScoreboardManager scoreboardManager;
   private TabManager tabManager;
   private SalaryTask salaryTask;
@@ -98,6 +101,7 @@ public class Survival extends JavaPlugin {
     teleportManager = new TeleportManager();
     bountyManager = new BountyManager(database);
     jobsManager = new JobsManager(database);
+    homeManager = new HomeManager(database);
     scoreboardManager = new ScoreboardManager();
     tabManager = new TabManager();
     
@@ -158,6 +162,14 @@ public class Survival extends JavaPlugin {
     
     GambleCommand gambleCommand = new GambleCommand();
     getCommand("gamble").setExecutor(gambleCommand);
+    
+    HomeCommand homeCommand = new HomeCommand();
+    getCommand("home").setExecutor(homeCommand);
+    getCommand("home").setTabCompleter(homeCommand);
+    getCommand("sethome").setExecutor(homeCommand);
+    getCommand("sethome").setTabCompleter(homeCommand);
+    getCommand("delhome").setExecutor(homeCommand);
+    getCommand("delhome").setTabCompleter(homeCommand);
     
     // Set server motd from config
     String motd = getConfig().getString("server.motd", "Welcome to the Survival Server!");
@@ -345,6 +357,14 @@ public class Survival extends JavaPlugin {
    */
   public JobsManager getJobsManager() {
     return jobsManager;
+  }
+
+  /**
+   * Get the home manager
+   * @return the home manager
+   */
+  public HomeManager getHomeManager() {
+    return homeManager;
   }
 
   /**

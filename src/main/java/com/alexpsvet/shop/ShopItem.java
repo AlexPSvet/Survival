@@ -34,6 +34,20 @@ public class ShopItem {
     public String getPermission() { return permission; }
     
     /**
+     * Get the total price for a specific quantity multiplier
+     */
+    public double getPriceFor(int quantityMultiplier) {
+        return price * quantityMultiplier;
+    }
+    
+    /**
+     * Create an ItemStack from this shop item with specific quantity
+     */
+    public ItemStack createItemStack(int quantityMultiplier) {
+        return new ItemStack(material, amount * quantityMultiplier);
+    }
+    
+    /**
      * Create an ItemStack from this shop item
      */
     public ItemStack createItemStack() {

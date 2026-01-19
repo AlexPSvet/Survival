@@ -32,13 +32,20 @@ economy:
   currency-symbol: "⛁"
   
   # Montant de départ pour les nouveaux joueurs
-  starting-balance: 1000.0
+  starting-balance: 500.0
   
   # Salaire toutes les X minutes de jeu
   salary:
     enabled: true
-    amount: 50.0
-    interval-minutes: 30
+    amount: 25.0
+    interval-minutes: 45
+
+# Shop Configuration
+shop:
+  # Amount to buy on left-click
+  left-click-amount: 64
+  # Amount to buy on right-click
+  right-click-amount: 128
 
 # Clan Configuration
 clans:
@@ -112,6 +119,19 @@ teleport:
   # Cooldown entre deux demandes (en secondes)
   cooldown-seconds: 60
 
+# Home Configuration
+home:
+  # Maximum number of homes per player
+  max-homes: 3
+  # Cost to set a home
+  set-cost: 1000.0
+  # Cost to teleport to home
+  teleport-cost: 100.0
+  # Cooldown in seconds between home teleports
+  cooldown-seconds: 300
+  # Delay before teleport (seconds)
+  delay-seconds: 5
+
 # Auction House Configuration
 auction:
   # Durée par défaut des ventes (en heures)
@@ -167,6 +187,11 @@ gamble:
   
   # Montant maximum pour parier
   maximum-bet: 50000.0
+  
+  # Blackjack configuration
+  blackjack:
+    minimum-bet: 50.0
+    maximum-bet: 10000.0
 
 # Messages
 messages:
@@ -197,3 +222,12 @@ messages:
     demoted: "&e{player} &ca été rétrogradé!"
     home-set: "&aPoint de téléportation du clan défini!"
     teleporting: "&aTéléportation au home du clan dans &e{seconds}&a secondes..."
+  home:
+    set: "&aHome &e{name} &adéfini avec succès!"
+    deleted: "&cHome &e{name} &csupprimé!"
+    teleporting: "&aTéléportation à &e{name} &adans &e{seconds}&a secondes..."
+    teleported: "&aVous avez été téléporté à &e{name}&a!"
+    max-homes: "&cVous avez atteint le nombre maximum de homes ({max})!"
+    not-found: "&cCe home n'existe pas!"
+    cooldown: "&cVous devez attendre &e{seconds}s &cavant de vous téléporter!"
+    insufficient-funds: "&cFonds insuffisants! Coût: &e{cost} {currency}"

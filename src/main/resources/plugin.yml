@@ -1,7 +1,7 @@
 name: survival
 main: com.alexpsvet.Survival
 version: 1.0-SNAPSHOT
-api-version: 1.15
+api-version: '1.21'
 
 commands:
   balance:
@@ -68,6 +68,15 @@ commands:
     description: Jeu de pile ou face
     aliases: [coinflip, pileouface]
     usage: /gamble
+  home:
+    description: Menu des homes et téléportation
+    usage: /home [nom]
+  sethome:
+    description: Définir un home
+    usage: /sethome [nom]
+  delhome:
+    description: Supprimer un home
+    usage: /delhome <nom>
 
 permissions:
   survival.economy.admin:
@@ -102,4 +111,7 @@ permissions:
     default: true
   survival.gamble:
     description: Accès au jeu de hasard
+    default: true
+  survival.home:
+    description: Accès au système de homes
     default: true

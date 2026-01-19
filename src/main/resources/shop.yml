@@ -15,74 +15,144 @@ categories:
         lore:
           - "&7Un bloc de pierre basique"
           - "&7parfait pour construire"
-        price: 10.0
-        amount: 64
+        price: 15.0
+        amount: 1
       cobblestone:
         material: COBBLESTONE
         name: "&7Pierre Taillée"
         lore:
           - "&7Pierre brute mais solide"
-        price: 8.0
-        amount: 64
+        price: 12.0
+        amount: 1
       oak_planks:
         material: OAK_PLANKS
         name: "&6Planches de Chêne"
         lore:
           - "&7Planches de bois classiques"
-        price: 15.0
-        amount: 64
+        price: 20.0
+        amount: 1
       spruce_planks:
         material: SPRUCE_PLANKS
         name: "&8Planches de Sapin"
         lore:
           - "&7Bois sombre"
-        price: 15.0
-        amount: 64
+        price: 20.0
+        amount: 1
       birch_planks:
         material: BIRCH_PLANKS
         name: "&fPlanches de Bouleau"
         lore:
           - "&7Bois clair"
-        price: 15.0
-        amount: 64
+        price: 20.0
+        amount: 1
+      jungle_planks:
+        material: JUNGLE_PLANKS
+        name: "&6Planches de Jungle"
+        lore:
+          - "&7Bois exotique"
+        price: 25.0
+        amount: 1
+      acacia_planks:
+        material: ACACIA_PLANKS
+        name: "&cPlanches d'Acacia"
+        lore:
+          - "&7Bois orangé"
+        price: 25.0
+        amount: 1
+      dark_oak_planks:
+        material: DARK_OAK_PLANKS
+        name: "&8Planches de Chêne Noir"
+        lore:
+          - "&7Bois très sombre"
+        price: 30.0
+        amount: 1
       bricks:
         material: BRICKS
         name: "&cBriques"
         lore:
           - "&7Briques décoratives"
-        price: 25.0
-        amount: 64
+        price: 35.0
+        amount: 1
       glass:
         material: GLASS
         name: "&bVerre"
         lore:
           - "&7Transparent et fragile"
-        price: 20.0
-        amount: 64
+        price: 30.0
+        amount: 1
+      white_stained_glass:
+        material: WHITE_STAINED_GLASS
+        name: "&fVerre Blanc"
+        lore:
+          - "&7Verre coloré blanc"
+        price: 35.0
+        amount: 1
+      black_stained_glass:
+        material: BLACK_STAINED_GLASS
+        name: "&8Verre Noir"
+        lore:
+          - "&7Verre coloré noir"
+        price: 35.0
+        amount: 1
       quartz_block:
         material: QUARTZ_BLOCK
         name: "&fQuartz"
         lore:
           - "&7Bloc blanc élégant"
-        price: 40.0
-        amount: 32
+        price: 60.0
+        amount: 1
+      sandstone:
+        material: SANDSTONE
+        name: "&eGrès"
+        lore:
+          - "&7Pierre du désert"
+        price: 18.0
+        amount: 1
+      smooth_stone:
+        material: SMOOTH_STONE
+        name: "&7Pierre Lisse"
+        lore:
+          - "&7Pierre polie"
+        price: 20.0
+        amount: 1
       glowstone:
         material: GLOWSTONE
         name: "&ePierre Lumineuse"
         lore:
           - "&7Source de lumière"
-        price: 30.0
-        amount: 16
+        price: 45.0
+        amount: 1
       sea_lantern:
         material: SEA_LANTERN
         name: "&bLanterne Marine"
         lore:
           - "&7Lumière aquatique"
-        price: 35.0
-        amount: 16
+        price: 50.0
+        amount: 1
+      end_stone:
+        material: END_STONE
+        name: "&eRoche de l'End"
+        lore:
+          - "&7Bloc de dimension"
+        price: 40.0
+        amount: 1
+      netherrack:
+        material: NETHERRACK
+        name: "&cNetherrack"
+        lore:
+          - "&7Roche du Nether"
+        price: 10.0
+        amount: 1
+      obsidian:
+        material: OBSIDIAN
+        name: "&5Obsidienne"
+        lore:
+          - "&7Bloc extrêmement résistant"
+        price: 100.0
+        amount: 1
       
   ores:
-    name: "Minerais"
+    name: "Minerais & Matériaux"
     icon: DIAMOND_ORE
     slot: 12
     items:
@@ -91,50 +161,92 @@ categories:
         name: "&8Charbon"
         lore:
           - "&7Combustible essentiel"
-        price: 5.0
-        amount: 16
+        price: 8.0
+        amount: 1
       iron_ingot:
         material: IRON_INGOT
         name: "&fLingot de Fer"
         lore:
           - "&7Matériau polyvalent"
-        price: 25.0
-        amount: 8
+        price: 40.0
+        amount: 1
       gold_ingot:
         material: GOLD_INGOT
-        name: "&elingot d'Or"
+        name: "&eLingot d'Or"
         lore:
           - "&7Précieux et brillant"
-        price: 50.0
-        amount: 8
+        price: 80.0
+        amount: 1
       diamond:
         material: DIAMOND
         name: "&bDiamant"
         lore:
           - "&7Le minerai le plus précieux!"
-        price: 500.0
+        price: 800.0
         amount: 1
       emerald:
         material: EMERALD
         name: "&aÉmeraude"
         lore:
           - "&7Monnaie des villageois"
-        price: 300.0
+        price: 500.0
+        amount: 1
+      netherite_ingot:
+        material: NETHERITE_INGOT
+        name: "&4Lingot de Netherite"
+        lore:
+          - "&7Le matériau ultime!"
+        price: 5000.0
         amount: 1
       redstone:
         material: REDSTONE
         name: "&cRedstone"
         lore:
           - "&7Composant électrique"
-        price: 10.0
-        amount: 32
+        price: 15.0
+        amount: 1
       lapis_lazuli:
         material: LAPIS_LAZULI
         name: "&9Lapis Lazuli"
         lore:
           - "&7Pour enchanter"
-        price: 15.0
-        amount: 16
+        price: 20.0
+        amount: 1
+      quartz:
+        material: QUARTZ
+        name: "&fQuartz du Nether"
+        lore:
+          - "&7Minerai précieux"
+        price: 25.0
+        amount: 1
+      copper_ingot:
+        material: COPPER_INGOT
+        name: "&6Lingot de Cuivre"
+        lore:
+          - "&7Matériau conducteur"
+        price: 30.0
+        amount: 1
+      amethyst_shard:
+        material: AMETHYST_SHARD
+        name: "&dÉclat d'Améthyste"
+        lore:
+          - "&7Cristal magnifique"
+        price: 60.0
+        amount: 1
+      ender_pearl:
+        material: ENDER_PEARL
+        name: "&5Perle de l'End"
+        lore:
+          - "&7Pour la téléportation"
+        price: 150.0
+        amount: 1
+      blaze_rod:
+        material: BLAZE_ROD
+        name: "&6Bâton de Blaze"
+        lore:
+          - "&7Matériau du Nether"
+        price: 200.0
+        amount: 1
   
   tools:
     name: "Outils & Armes"
@@ -146,104 +258,347 @@ categories:
         name: "&fPioche en Fer"
         lore:
           - "&7Outil de minage basique"
-        price: 150.0
+        price: 250.0
+        amount: 1
+      diamond_pickaxe:
+        material: DIAMOND_PICKAXE
+        name: "&bPioche en Diamant"
+        lore:
+          - "&7Outil de minage avancé"
+        price: 3500.0
         amount: 1
       iron_axe:
         material: IRON_AXE
         name: "&fHache en Fer"
         lore:
           - "&7Pour couper du bois"
-        price: 150.0
+        price: 250.0
+        amount: 1
+      diamond_axe:
+        material: DIAMOND_AXE
+        name: "&bHache en Diamant"
+        lore:
+          - "&7Hache puissante"
+        price: 3500.0
+        amount: 1
+      iron_shovel:
+        material: IRON_SHOVEL
+        name: "&fPelle en Fer"
+        lore:
+          - "&7Pour creuser"
+        price: 200.0
+        amount: 1
+      diamond_shovel:
+        material: DIAMOND_SHOVEL
+        name: "&bPelle en Diamant"
+        lore:
+          - "&7Pelle rapide"
+        price: 3000.0
         amount: 1
       iron_sword:
         material: IRON_SWORD
         name: "&fÉpée en Fer"
         lore:
           - "&7Arme de combat"
-        price: 100.0
+        price: 200.0
+        amount: 1
+      diamond_sword:
+        material: DIAMOND_SWORD
+        name: "&bÉpée en Diamant"
+        lore:
+          - "&7Arme puissante"
+        price: 3500.0
         amount: 1
       shield:
         material: SHIELD
         name: "&7Bouclier"
         lore:
           - "&7Protection contre les attaques"
-        price: 120.0
+        price: 200.0
         amount: 1
       fishing_rod:
         material: FISHING_ROD
         name: "&bCanne à Pêche"
         lore:
           - "&7Pour pêcher"
-        price: 60.0
+        price: 100.0
         amount: 1
       bow:
         material: BOW
         name: "&6Arc"
         lore:
           - "&7Arme à distance"
-        price: 80.0
+        price: 150.0
+        amount: 1
+      crossbow:
+        material: CROSSBOW
+        name: "&7Arbalète"
+        lore:
+          - "&7Arme à distance précise"
+        price: 250.0
         amount: 1
       arrow:
         material: ARROW
         name: "&fFlèches"
         lore:
           - "&7Munitions pour l'arc"
-        price: 2.0
-        amount: 64
+        price: 3.0
+        amount: 1
+      shears:
+        material: SHEARS
+        name: "&7Cisailles"
+        lore:
+          - "&7Pour tondre et récolter"
+        price: 80.0
+        amount: 1
+      flint_and_steel:
+        material: FLINT_AND_STEEL
+        name: "&6Briquet"
+        lore:
+          - "&7Pour allumer des feux"
+        price: 50.0
+        amount: 1
+  
+  armor:
+    name: "Armures"
+    icon: DIAMOND_CHESTPLATE
+    slot: 20
+    items:
+      iron_helmet:
+        material: IRON_HELMET
+        name: "&fCasque en Fer"
+        lore:
+          - "&7Protection de base"
+        price: 300.0
+        amount: 1
+      iron_chestplate:
+        material: IRON_CHESTPLATE
+        name: "&fPlastron en Fer"
+        lore:
+          - "&7Protection de base"
+        price: 500.0
+        amount: 1
+      iron_leggings:
+        material: IRON_LEGGINGS
+        name: "&fJambières en Fer"
+        lore:
+          - "&7Protection de base"
+        price: 400.0
+        amount: 1
+      iron_boots:
+        material: IRON_BOOTS
+        name: "&fBottes en Fer"
+        lore:
+          - "&7Protection de base"
+        price: 250.0
+        amount: 1
+      diamond_helmet:
+        material: DIAMOND_HELMET
+        name: "&bCasque en Diamant"
+        lore:
+          - "&7Protection excellente"
+        price: 3000.0
+        amount: 1
+      diamond_chestplate:
+        material: DIAMOND_CHESTPLATE
+        name: "&bPlastron en Diamant"
+        lore:
+          - "&7Protection excellente"
+        price: 5000.0
+        amount: 1
+      diamond_leggings:
+        material: DIAMOND_LEGGINGS
+        name: "&bJambières en Diamant"
+        lore:
+          - "&7Protection excellente"
+        price: 4000.0
+        amount: 1
+      diamond_boots:
+        material: DIAMOND_BOOTS
+        name: "&bBottes en Diamant"
+        lore:
+          - "&7Protection excellente"
+        price: 2500.0
+        amount: 1
   
   food:
     name: "Nourriture"
     icon: COOKED_BEEF
     slot: 16
     items:
-      porkchop:
-        material: COOKED_PORKCHOP
-        name: "&cCôtelette Cuite"
+      apple:
+        material: APPLE
+        name: "&cPomme"
         lore:
-          - "&7Délicieuse viande"
-        price: 15.0
-        amount: 16
-      chicken:
-        material: COOKED_CHICKEN
-        name: "&ePoulet Cuit"
-        lore:
-          - "&7Nourriture simple"
-        price: 12.0
-        amount: 16
-      fish:
-        material: COOKED_COD
-        name: "&bPoisson Cuit"
-        lore:
-          - "&7Fruit de mer"
+          - "&7Fruit frais"
         price: 10.0
-        amount: 16
+        amount: 1
       bread:
         material: BREAD
         name: "&ePain"
         lore:
           - "&7Nourriture simple"
-        price: 10.0
-        amount: 16
+        price: 15.0
+        amount: 1
+      cooked_porkchop:
+        material: COOKED_PORKCHOP
+        name: "&cCôtelette Cuite"
+        lore:
+          - "&7Délicieuse viande"
+        price: 25.0
+        amount: 1
+      cooked_chicken:
+        material: COOKED_CHICKEN
+        name: "&ePoulet Cuit"
+        lore:
+          - "&7Nourriture simple"
+        price: 20.0
+        amount: 1
+      cooked_cod:
+        material: COOKED_COD
+        name: "&bPoisson Cuit"
+        lore:
+          - "&7Fruit de mer"
+        price: 18.0
+        amount: 1
+      cooked_salmon:
+        material: COOKED_SALMON
+        name: "&cSaumon Cuit"
+        lore:
+          - "&7Poisson savoureux"
+        price: 22.0
+        amount: 1
       cooked_beef:
         material: COOKED_BEEF
         name: "&cSteak Cuit"
         lore:
           - "&7Viande délicieuse"
-        price: 15.0
-        amount: 16
+        price: 25.0
+        amount: 1
+      baked_potato:
+        material: BAKED_POTATO
+        name: "&6Patate Cuite"
+        lore:
+          - "&7Nourriture simple"
+        price: 12.0
+        amount: 1
+      carrot:
+        material: CARROT
+        name: "&6Carotte"
+        lore:
+          - "&7Légume croquant"
+        price: 8.0
+        amount: 1
       golden_apple:
         material: GOLDEN_APPLE
         name: "&6Pomme d'Or"
         lore:
           - "&7Régénération puissante"
-        price: 250.0
+        price: 400.0
         amount: 1
       cake:
         material: CAKE
         name: "&dGâteau"
         lore:
           - "&7Pour célébrer!"
+        price: 80.0
+        amount: 1
+      cookie:
+        material: COOKIE
+        name: "&6Cookie"
+        lore:
+          - "&7Petit en-cas sucré"
+        price: 15.0
+        amount: 1
+      melon_slice:
+        material: MELON_SLICE
+        name: "&aTranche de Melon"
+        lore:
+          - "&7Fruit rafraîchissant"
+        price: 5.0
+        amount: 1
+  
+  farming:
+    name: "Agriculture"
+    icon: WHEAT
+    slot: 22
+    items:
+      wheat_seeds:
+        material: WHEAT_SEEDS
+        name: "&eGraines de Blé"
+        lore:
+          - "&7Pour cultiver du blé"
+        price: 5.0
+        amount: 1
+      beetroot_seeds:
+        material: BEETROOT_SEEDS
+        name: "&cGraines de Betterave"
+        lore:
+          - "&7Pour cultiver des betteraves"
+        price: 6.0
+        amount: 1
+      pumpkin_seeds:
+        material: PUMPKIN_SEEDS
+        name: "&6Graines de Citrouille"
+        lore:
+          - "&7Pour cultiver des citrouilles"
+        price: 8.0
+        amount: 1
+      melon_seeds:
+        material: MELON_SEEDS
+        name: "&aGraines de Melon"
+        lore:
+          - "&7Pour cultiver des melons"
+        price: 8.0
+        amount: 1
+      bone_meal:
+        material: BONE_MEAL
+        name: "&fPoudre d'Os"
+        lore:
+          - "&7Engrais pour plantes"
+        price: 10.0
+        amount: 1
+      oak_sapling:
+        material: OAK_SAPLING
+        name: "&2Pousse de Chêne"
+        lore:
+          - "&7Planter des arbres"
+        price: 15.0
+        amount: 1
+      spruce_sapling:
+        material: SPRUCE_SAPLING
+        name: "&2Pousse de Sapin"
+        lore:
+          - "&7Planter des arbres"
+        price: 15.0
+        amount: 1
+      birch_sapling:
+        material: BIRCH_SAPLING
+        name: "&2Pousse de Bouleau"
+        lore:
+          - "&7Planter des arbres"
+        price: 15.0
+        amount: 1
+      jungle_sapling:
+        material: JUNGLE_SAPLING
+        name: "&2Pousse de Jungle"
+        lore:
+          - "&7Planter des arbres"
+        price: 20.0
+        amount: 1
+      water_bucket:
+        material: WATER_BUCKET
+        name: "&bSeau d'Eau"
+        lore:
+          - "&7Pour irriguer les cultures"
         price: 50.0
+        amount: 1
+      lava_bucket:
+        material: LAVA_BUCKET
+        name: "&6Seau de Lave"
+        lore:
+          - "&7Source de lave"
+        price: 200.0
         amount: 1
   
   redstone:
@@ -256,28 +611,78 @@ categories:
         name: "&cRedstone"
         lore:
           - "&7Poussière électrique"
-        price: 10.0
-        amount: 64
+        price: 15.0
+        amount: 1
+      redstone_torch:
+        material: REDSTONE_TORCH
+        name: "&cTorche Redstone"
+        lore:
+          - "&7Source d'énergie"
+        price: 20.0
+        amount: 1
+      repeater:
+        material: REPEATER
+        name: "&7Répéteur"
+        lore:
+          - "&7Retarder le signal"
+        price: 30.0
+        amount: 1
+      comparator:
+        material: COMPARATOR
+        name: "&7Comparateur"
+        lore:
+          - "&7Comparer les signaux"
+        price: 35.0
+        amount: 1
       piston:
         material: PISTON
         name: "&7Piston"
         lore:
           - "&7Mécanisme pousseur"
-        price: 50.0
-        amount: 4
+        price: 80.0
+        amount: 1
+      sticky_piston:
+        material: STICKY_PISTON
+        name: "&aPiston Collant"
+        lore:
+          - "&7Tire et pousse"
+        price: 100.0
+        amount: 1
       hopper:
         material: HOPPER
         name: "&7Entonnoir"
         lore:
           - "&7Transfert d'items"
-        price: 100.0
+        price: 150.0
+        amount: 1
+      dropper:
+        material: DROPPER
+        name: "&7Éjecteur"
+        lore:
+          - "&7Éjecte des items"
+        price: 70.0
+        amount: 1
+      dispenser:
+        material: DISPENSER
+        name: "&7Distributeur"
+        lore:
+          - "&7Distribue des items"
+        price: 80.0
         amount: 1
       observer:
         material: OBSERVER
         name: "&7Observateur"
         lore:
           - "&7Détecte les changements"
-        price: 75.0
+        price: 120.0
+        amount: 1
+      tnt:
+        material: TNT
+        name: "&cTNT"
+        lore:
+          - "&7Explosif puissant"
+          - "&c&lDANGEREUX!"
+        price: 300.0
         amount: 1
   
   premium:
@@ -291,23 +696,25 @@ categories:
         lore:
           - "&7Ailes pour voler!"
           - "&5Réservé aux VIP+"
-        price: 10000.0
+        price: 25000.0
         amount: 1
+        permission: "survival.premium.rank2"
       totem_of_undying:
         material: TOTEM_OF_UNDYING
         name: "&6Totem d'Immortalité"
         lore:
           - "&7Vous sauve de la mort"
           - "&5Réservé aux VIP+"
-        price: 5000.0
+        price: 10000.0
         amount: 1
+        permission: "survival.premium.rank2"
       enchanted_golden_apple:
         material: ENCHANTED_GOLDEN_APPLE
         name: "&6Pomme d'Or Enchantée"
         lore:
           - "&7Régénération ultime"
           - "&5Réservé aux VIP"
-        price: 1000.0
+        price: 2000.0
         amount: 1
         permission: "survival.premium.rank1"
       beacon:
@@ -316,7 +723,34 @@ categories:
         lore:
           - "&7Effets de zone"
           - "&5Réservé aux MVP"
+        price: 30000.0
+        amount: 1
+        permission: "survival.premium.rank3"
+      trident:
+        material: TRIDENT
+        name: "&bTrident"
+        lore:
+          - "&7Arme aquatique légendaire"
+          - "&5Réservé aux VIP+"
         price: 15000.0
+        amount: 1
+        permission: "survival.premium.rank2"
+      nether_star:
+        material: NETHER_STAR
+        name: "&fÉtoile du Nether"
+        lore:
+          - "&7Matériau extrêmement rare"
+          - "&5Réservé aux MVP"
+        price: 50000.0
+        amount: 1
+        permission: "survival.premium.rank3"
+      dragon_egg:
+        material: DRAGON_EGG
+        name: "&5Œuf de Dragon"
+        lore:
+          - "&7Objet de collection ultime"
+          - "&5Réservé aux MVP"
+        price: 100000.0
         amount: 1
         permission: "survival.premium.rank3"
   
@@ -330,26 +764,82 @@ categories:
         name: "&6Peinture"
         lore:
           - "&7Art mural"
-        price: 20.0
-        amount: 4
+        price: 30.0
+        amount: 1
+      item_frame:
+        material: ITEM_FRAME
+        name: "&6Cadre"
+        lore:
+          - "&7Exposer des items"
+        price: 25.0
+        amount: 1
       flower_pot:
         material: FLOWER_POT
         name: "&ePot de Fleur"
         lore:
           - "&7Décoration florale"
-        price: 15.0
-        amount: 8
-      banner:
+        price: 20.0
+        amount: 1
+      white_banner:
         material: WHITE_BANNER
-        name: "&fBannière"
+        name: "&fBannière Blanche"
         lore:
           - "&7Bannière personnalisable"
-        price: 50.0
+        price: 60.0
         amount: 1
       armor_stand:
         material: ARMOR_STAND
         name: "&7Support d'Armure"
         lore:
           - "&7Pour exposer votre équipement"
+        price: 150.0
+        amount: 1
+      lantern:
+        material: LANTERN
+        name: "&6Lanterne"
+        lore:
+          - "&7Source de lumière décorative"
+        price: 40.0
+        amount: 1
+      campfire:
+        material: CAMPFIRE
+        name: "&6Feu de Camp"
+        lore:
+          - "&7Ambiance chaleureuse"
+        price: 50.0
+        amount: 1
+      bookshelf:
+        material: BOOKSHELF
+        name: "&6Bibliothèque"
+        lore:
+          - "&7Rangement de livres"
+        price: 45.0
+        amount: 1
+      chest:
+        material: CHEST
+        name: "&6Coffre"
+        lore:
+          - "&7Stockage de base"
+        price: 30.0
+        amount: 1
+      barrel:
+        material: BARREL
+        name: "&6Tonneau"
+        lore:
+          - "&7Stockage décoratif"
+        price: 35.0
+        amount: 1
+      bell:
+        material: BELL
+        name: "&eCloche"
+        lore:
+          - "&7Sonnerie de village"
         price: 100.0
+        amount: 1
+      lectern:
+        material: LECTERN
+        name: "&6Pupitre"
+        lore:
+          - "&7Pour lire des livres"
+        price: 50.0
         amount: 1

@@ -3,6 +3,9 @@ package com.alexpsvet.gamble;
 import com.alexpsvet.Survival;
 import com.alexpsvet.economy.EconomyManager;
 import com.alexpsvet.economy.TransactionType;
+import com.alexpsvet.gamble.blackjack.BlackjackGame;
+import com.alexpsvet.gamble.blackjack.Card;
+import com.alexpsvet.gamble.blackjack.Hand;
 import com.alexpsvet.utils.MessageUtil;
 import com.alexpsvet.utils.menu.Button;
 import com.alexpsvet.utils.menu.Menu;
@@ -15,12 +18,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 /**
- * Coin flip gambling menu (Pile ou Face)
+ * Gambling menus (Coin flip and Blackjack)
  */
 public class GambleMenu {
     
     private static final Map<UUID, Double> activeBets = new HashMap<>();
     private static final Map<UUID, CoinSide> activeChoices = new HashMap<>();
+    private static final Map<UUID, BlackjackGame> activeBlackjackGames = new HashMap<>();
     
     public enum CoinSide {
         PILE("Pile", "⛏"),
@@ -44,9 +48,91 @@ public class GambleMenu {
     }
     
     /**
-     * Open main gamble menu
+     * Open main gamble menu (game selection)
      */
     public static void openMainMenu(Player player) {
+        Menu.Builder builder = new Menu.Builder()
+            .title(MessageUtil.colorize("&6&lCasino Periquito"))
+            .rows(4);
+        
+        String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
+        EconomyManager eco = Survival.getInstance().getEconomyManager();
+        double balance = eco.getBalance(player.getUniqueId());
+        
+        // Info item
+        ItemStack info = new ItemStack(Material.NETHER_STAR);
+        List<String> infoLore = new ArrayList<>();
+        infoLore.add(MessageUtil.colorize("&7Bienvenue au casino!"));
+        infoLore.add(MessageUtil.colorize("&7Choisissez votre jeu"));
+        infoLore.add("");
+        infoLore.add(MessageUtil.colorize("&7Votre solde: &e" + balance + " " + currency));
+        infoLore.add("");
+        infoLore.add(MessageUtil.colorize("&e&lBonne chance!"));
+        
+        builder.button(new Button.Builder()
+            .slot(4)
+            .item(info)
+            .name(MessageUtil.colorize("&6&lCasino"))
+            .lore(infoLore)
+            .build());
+        
+        // Coin Flip
+        ItemStack coinFlip = new ItemStack(Material.GOLD_INGOT);
+        List<String> coinLore = new ArrayList<>();
+        coinLore.add(MessageUtil.colorize("&7Pariez sur Pile ou Face"));
+        coinLore.add(MessageUtil.colorize("&7et doublez votre mise!"));
+        coinLore.add("");
+        coinLore.add(MessageUtil.colorize("&aGain: &e2x votre mise"));
+        coinLore.add("");
+        coinLore.add(MessageUtil.colorize("&eCliquez pour jouer!"));
+        
+        builder.button(new Button.Builder()
+            .slot(11)
+            .item(coinFlip)
+            .name(MessageUtil.colorize("&6&lPile ou Face"))
+            .lore(coinLore)
+            .onClick((p, clickType) -> openCoinFlipMenu(p))
+            .build());
+        
+        // Blackjack
+        ItemStack blackjack = new ItemStack(Material.BOOK);
+        List<String> bjLore = new ArrayList<>();
+        bjLore.add(MessageUtil.colorize("&7Battez le dealer au Blackjack!"));
+        bjLore.add(MessageUtil.colorize("&7Obtenez 21 ou proche"));
+        bjLore.add("");
+        bjLore.add(MessageUtil.colorize("&aBlackjack: &e2.5x votre mise"));
+        bjLore.add(MessageUtil.colorize("&aVictoire: &e2x votre mise"));
+        bjLore.add("");
+        bjLore.add(MessageUtil.colorize("&eCliquez pour jouer!"));
+        
+        builder.button(new Button.Builder()
+            .slot(15)
+            .item(blackjack)
+            .name(MessageUtil.colorize("&0&lBlackjack"))
+            .lore(bjLore)
+            .onClick((p, clickType) -> openBlackjackBetMenu(p))
+            .build());
+        
+        // Close button
+        ItemStack close = new ItemStack(Material.BARRIER);
+        builder.button(new Button.Builder()
+            .slot(31)
+            .item(close)
+            .name(MessageUtil.colorize("&cFermer"))
+            .onClick((p, clickType) -> {
+                activeBets.remove(p.getUniqueId());
+                activeChoices.remove(p.getUniqueId());
+                p.closeInventory();
+            })
+            .build());
+        
+        builder.build().open(player);
+    }
+    
+    /**
+     * Open coin flip bet menu
+     */
+    public static void openCoinFlipMenu(Player player) {
         Menu.Builder builder = new Menu.Builder()
             .title(MessageUtil.colorize("&6&lPile ou Face"))
             .rows(5);
@@ -114,17 +200,13 @@ public class GambleMenu {
                 .build());
         }
         
-        // Close button
-        ItemStack close = new ItemStack(Material.BARRIER);
+        // Back button
+        ItemStack back = new ItemStack(Material.ARROW);
         builder.button(new Button.Builder()
             .slot(40)
-            .item(close)
-            .name(MessageUtil.colorize("&cFermer"))
-            .onClick((p, clickType) -> {
-                activeBets.remove(p.getUniqueId());
-                activeChoices.remove(p.getUniqueId());
-                p.closeInventory();
-            })
+            .item(back)
+            .name(MessageUtil.colorize("&cRetour"))
+            .onClick((p, clickType) -> openMainMenu(p))
             .build());
         
         builder.build().open(player);
@@ -136,7 +218,7 @@ public class GambleMenu {
     public static void openChoiceMenu(Player player) {
         Double betAmount = activeBets.get(player.getUniqueId());
         if (betAmount == null) {
-            openMainMenu(player);
+            openCoinFlipMenu(player);
             return;
         }
         
@@ -191,7 +273,7 @@ public class GambleMenu {
             .onClick((p, clickType) -> {
                 activeBets.remove(p.getUniqueId());
                 activeChoices.remove(p.getUniqueId());
-                openMainMenu(p);
+                openCoinFlipMenu(p);
             })
             .build());
         
@@ -206,7 +288,7 @@ public class GambleMenu {
         CoinSide choice = activeChoices.get(player.getUniqueId());
         
         if (betAmount == null || choice == null) {
-            openMainMenu(player);
+            openCoinFlipMenu(player);
             return;
         }
         
@@ -296,11 +378,15 @@ public class GambleMenu {
                 player.getLocation().add(0, 2, 0),
                 50, 0.5, 0.5, 0.5, 0.1
             );
+            
+            eco.addTransaction(player.getUniqueId(), TransactionType.GAMBLE_WIN, betAmount, "Coinflip Win");
         } else {
             player.sendMessage(MessageUtil.colorize("&c&l✗ PERDU!"));
             player.sendMessage(MessageUtil.colorize("&7Perte: &c-" + betAmount + " " + currency));
             
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            
+            eco.addTransaction(player.getUniqueId(), TransactionType.GAMBLE_LOSS, -betAmount, "Coinflip Loss");
         }
         
         player.sendMessage("");
@@ -317,5 +403,339 @@ public class GambleMenu {
                 openMainMenu(player);
             }
         }, 60L);
+    }
+    
+    // ==================== BLACKJACK ====================
+    
+    /**
+     * Open blackjack bet selection menu
+     */
+    public static void openBlackjackBetMenu(Player player) {
+        Menu.Builder builder = new Menu.Builder()
+            .title(MessageUtil.colorize("&c&lBlackjack - Mise"))
+            .rows(5);
+        
+        String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
+        EconomyManager eco = Survival.getInstance().getEconomyManager();
+        double balance = eco.getBalance(player.getUniqueId());
+        
+        // Info item
+        ItemStack info = new ItemStack(Material.BOOK);
+        List<String> infoLore = new ArrayList<>();
+        infoLore.add(MessageUtil.colorize("&7Votre solde: &e" + balance + " " + currency));
+        infoLore.add("");
+        infoLore.add(MessageUtil.colorize("&7Blackjack: &ax2.5"));
+        infoLore.add(MessageUtil.colorize("&7Victoire: &ax2"));
+        infoLore.add("");
+        infoLore.add(MessageUtil.colorize("&e&lChoisissez votre mise"));
+        
+        builder.button(new Button.Builder()
+            .slot(4)
+            .item(info)
+            .name(MessageUtil.colorize("&c&lBlackjack"))
+            .lore(infoLore)
+            .build());
+        
+        // Bet amounts
+        double[] betAmounts = {100, 500, 1000, 5000, 10000, 25000, 50000};
+        int[] slots = {10, 11, 12, 13, 14, 15, 16};
+        
+        for (int i = 0; i < betAmounts.length && i < slots.length; i++) {
+            final double amount = betAmounts[i];
+            Material material = amount <= 1000 ? Material.GOLD_NUGGET :
+                               amount <= 10000 ? Material.GOLD_INGOT :
+                               Material.DIAMOND;
+            
+            ItemStack item = new ItemStack(material);
+            List<String> lore = new ArrayList<>();
+            lore.add(MessageUtil.colorize("&7Mise: &e" + amount + " " + currency));
+            lore.add("");
+            
+            if (balance >= amount) {
+                lore.add(MessageUtil.colorize("&aGain possible: &e" + (amount * 2) + " " + currency));
+                lore.add(MessageUtil.colorize("&aBlackjack: &e" + (amount * 2.5) + " " + currency));
+                lore.add("");
+                lore.add(MessageUtil.colorize("&eCliquez pour parier!"));
+            } else {
+                lore.add(MessageUtil.colorize("&cFonds insuffisants"));
+            }
+            
+            builder.button(new Button.Builder()
+                .slot(slots[i])
+                .item(item)
+                .name(MessageUtil.colorize("&6&lParier " + amount + " " + currency))
+                .lore(lore)
+                .onClick((p, clickType) -> {
+                    if (balance >= amount) {
+                        startBlackjackGame(p, amount);
+                    } else {
+                        p.sendMessage(MessageUtil.colorize("&cVous n'avez pas assez d'argent!"));
+                    }
+                })
+                .build());
+        }
+        
+        // Back button
+        ItemStack back = new ItemStack(Material.ARROW);
+        builder.button(new Button.Builder()
+            .slot(40)
+            .item(back)
+            .name(MessageUtil.colorize("&cRetour"))
+            .onClick((p, clickType) -> openMainMenu(p))
+            .build());
+        
+        builder.build().open(player);
+    }
+    
+    /**
+     * Start a new blackjack game
+     */
+    private static void startBlackjackGame(Player player, double bet) {
+        EconomyManager eco = Survival.getInstance().getEconomyManager();
+        
+        // Check balance
+        if (eco.getBalance(player.getUniqueId()) < bet) {
+            player.sendMessage(MessageUtil.colorize("&cVous n'avez pas assez d'argent!"));
+            return;
+        }
+        
+        // Deduct bet
+        eco.removeBalance(player.getUniqueId(), bet);
+        eco.addTransaction(player.getUniqueId(), TransactionType.GAMBLE_BET, -bet, "Blackjack Bet");
+        
+        // Create game
+        BlackjackGame game = new BlackjackGame(bet);
+        activeBlackjackGames.put(player.getUniqueId(), game);
+        
+        // Check for immediate blackjack
+        if (game.getState() == BlackjackGame.GameState.PLAYER_BLACKJACK) {
+            showBlackjackResult(player, game);
+        } else {
+            openBlackjackGameMenu(player);
+        }
+    }
+    
+    /**
+     * Open blackjack game menu
+     */
+    private static void openBlackjackGameMenu(Player player) {
+        BlackjackGame game = activeBlackjackGames.get(player.getUniqueId());
+        if (game == null) {
+            openMainMenu(player);
+            return;
+        }
+        
+        String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
+        Hand playerHand = game.getPlayerHand();
+        Hand dealerHand = game.getDealerHand();
+        
+        Menu.Builder builder = new Menu.Builder()
+            .title(MessageUtil.colorize("&c&lBlackjack - Jeu"))
+            .rows(5);
+        
+        // Player hand display
+        ItemStack playerHandItem = new ItemStack(Material.PLAYER_HEAD);
+        List<String> playerLore = new ArrayList<>();
+        playerLore.add(MessageUtil.colorize("&7Cartes:"));
+        for (Card card : playerHand.getCards()) {
+            playerLore.add(MessageUtil.colorize("&f  " + card.toString() + " &7- &e" + card.getDisplayName()));
+        }
+        playerLore.add("");
+        playerLore.add(MessageUtil.colorize("&7Total: &a" + playerHand.getValue()));
+        
+        builder.button(new Button.Builder()
+            .slot(11)
+            .item(playerHandItem)
+            .name(MessageUtil.colorize("&a&lVotre Main"))
+            .lore(playerLore)
+            .build());
+        
+        // Dealer hand display (hide second card if game ongoing)
+        ItemStack dealerHandItem = new ItemStack(Material.SKELETON_SKULL);
+        List<String> dealerLore = new ArrayList<>();
+        dealerLore.add(MessageUtil.colorize("&7Cartes:"));
+        List<Card> dealerCards = dealerHand.getCards();
+        if (game.isGameOver()) {
+            // Show all cards
+            for (Card card : dealerCards) {
+                dealerLore.add(MessageUtil.colorize("&f  " + card.toString() + " &7- &e" + card.getDisplayName()));
+            }
+            dealerLore.add("");
+            dealerLore.add(MessageUtil.colorize("&7Total: &c" + dealerHand.getValue()));
+        } else {
+            // Hide second card
+            dealerLore.add(MessageUtil.colorize("&f  " + dealerCards.get(0).toString() + " &7- &e" + dealerCards.get(0).getDisplayName()));
+            dealerLore.add(MessageUtil.colorize("&f  ?? &7- &cCachée"));
+            dealerLore.add("");
+            dealerLore.add(MessageUtil.colorize("&7Total: &c??"));
+        }
+        
+        builder.button(new Button.Builder()
+            .slot(15)
+            .item(dealerHandItem)
+            .name(MessageUtil.colorize("&c&lMain du Dealer"))
+            .lore(dealerLore)
+            .build());
+        
+        // Info/Bet display
+        ItemStack info = new ItemStack(Material.GOLD_INGOT);
+        List<String> infoLore = new ArrayList<>();
+        infoLore.add(MessageUtil.colorize("&7Mise: &e" + game.getBet() + " " + currency));
+        infoLore.add("");
+        infoLore.add(MessageUtil.colorize("&7État: &e" + getStateDisplay(game.getState())));
+        
+        builder.button(new Button.Builder()
+            .slot(4)
+            .item(info)
+            .name(MessageUtil.colorize("&6&lInformation"))
+            .lore(infoLore)
+            .build());
+        
+        if (!game.isGameOver()) {
+            // Hit button
+            ItemStack hit = new ItemStack(Material.LIME_WOOL);
+            List<String> hitLore = new ArrayList<>();
+            hitLore.add(MessageUtil.colorize("&7Tirer une carte"));
+            hitLore.add("");
+            hitLore.add(MessageUtil.colorize("&eCliquez pour Hit!"));
+            
+            builder.button(new Button.Builder()
+                .slot(30)
+                .item(hit)
+                .name(MessageUtil.colorize("&a&lHit"))
+                .lore(hitLore)
+                .onClick((p, clickType) -> {
+                    game.hit();
+                    p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
+                    if (game.isGameOver()) {
+                        showBlackjackResult(p, game);
+                    } else {
+                        openBlackjackGameMenu(p);
+                    }
+                })
+                .build());
+            
+            // Stand button
+            ItemStack stand = new ItemStack(Material.RED_WOOL);
+            List<String> standLore = new ArrayList<>();
+            standLore.add(MessageUtil.colorize("&7Garder votre main"));
+            standLore.add(MessageUtil.colorize("&7Le dealer jouera"));
+            standLore.add("");
+            standLore.add(MessageUtil.colorize("&eCliquez pour Stand!"));
+            
+            builder.button(new Button.Builder()
+                .slot(32)
+                .item(stand)
+                .name(MessageUtil.colorize("&c&lStand"))
+                .lore(standLore)
+                .onClick((p, clickType) -> {
+                    game.stand();
+                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.2f);
+                    showBlackjackResult(p, game);
+                })
+                .build());
+        }
+        
+        builder.build().open(player);
+    }
+    
+    /**
+     * Show blackjack result
+     */
+    private static void showBlackjackResult(Player player, BlackjackGame game) {
+        String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
+        EconomyManager eco = Survival.getInstance().getEconomyManager();
+        
+        player.closeInventory();
+        
+        // Display cards
+        player.sendMessage("");
+        player.sendMessage(MessageUtil.colorize("&c&l━━━━━━━━━━━━━━━━━━━━━━━━"));
+        player.sendMessage(MessageUtil.colorize("&c&l  BLACKJACK - RÉSULTAT"));
+        player.sendMessage(MessageUtil.colorize("&c&l━━━━━━━━━━━━━━━━━━━━━━━━"));
+        player.sendMessage("");
+        
+        Hand playerHand = game.getPlayerHand();
+        Hand dealerHand = game.getDealerHand();
+        
+        player.sendMessage(MessageUtil.colorize("&a&lVotre Main: &f" + playerHand.toString()));
+        player.sendMessage(MessageUtil.colorize("&c&lDealer: &f" + dealerHand.toString()));
+        player.sendMessage("");
+        
+        double winnings = game.getWinnings();
+        double profit = winnings - game.getBet();
+        
+        switch (game.getState()) {
+            case PLAYER_BLACKJACK:
+                player.sendMessage(MessageUtil.colorize("&6&l★ BLACKJACK! ★"));
+                player.sendMessage(MessageUtil.colorize("&7Gain: &a+" + winnings + " " + currency));
+                player.sendMessage(MessageUtil.colorize("&7Profit: &a+" + profit + " " + currency));
+                eco.addBalance(player.getUniqueId(), winnings);
+                eco.addTransaction(player.getUniqueId(), TransactionType.GAMBLE_WIN, profit, "Blackjack Win (Blackjack)");
+                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
+                break;
+                
+            case PLAYER_WIN:
+            case DEALER_BUSTED:
+                player.sendMessage(MessageUtil.colorize("&a&l✓ VICTOIRE!"));
+                player.sendMessage(MessageUtil.colorize("&7Gain: &a+" + winnings + " " + currency));
+                player.sendMessage(MessageUtil.colorize("&7Profit: &a+" + profit + " " + currency));
+                eco.addBalance(player.getUniqueId(), winnings);
+                eco.addTransaction(player.getUniqueId(), TransactionType.GAMBLE_WIN, profit, "Blackjack Win");
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+                break;
+                
+            case PUSH:
+                player.sendMessage(MessageUtil.colorize("&e&l= ÉGALITÉ!"));
+                player.sendMessage(MessageUtil.colorize("&7Mise rendue: &e" + game.getBet() + " " + currency));
+                eco.addBalance(player.getUniqueId(), winnings);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f);
+                break;
+                
+            case PLAYER_BUSTED:
+                player.sendMessage(MessageUtil.colorize("&c&l✗ BUST! (Dépassé 21)"));
+                player.sendMessage(MessageUtil.colorize("&7Perte: &c-" + game.getBet() + " " + currency));
+                eco.addTransaction(player.getUniqueId(), TransactionType.GAMBLE_LOSS, -game.getBet(), "Blackjack Loss (Bust)");
+                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 0.8f);
+                break;
+                
+            case DEALER_WIN:
+                player.sendMessage(MessageUtil.colorize("&c&l✗ DÉFAITE!"));
+                player.sendMessage(MessageUtil.colorize("&7Perte: &c-" + game.getBet() + " " + currency));
+                eco.addTransaction(player.getUniqueId(), TransactionType.GAMBLE_LOSS, -game.getBet(), "Blackjack Loss");
+                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+                break;
+        }
+        
+        player.sendMessage("");
+        player.sendMessage(MessageUtil.colorize("&7Nouveau solde: &e" + eco.getBalance(player.getUniqueId()) + " " + currency));
+        player.sendMessage(MessageUtil.colorize("&c&l━━━━━━━━━━━━━━━━━━━━━━━━"));
+        
+        // Clean up
+        activeBlackjackGames.remove(player.getUniqueId());
+        
+        // Reopen menu after 4 seconds
+        Bukkit.getScheduler().runTaskLater(Survival.getInstance(), () -> {
+            if (player.isOnline()) {
+                openMainMenu(player);
+            }
+        }, 80L);
+    }
+    
+    /**
+     * Get display text for game state
+     */
+    private static String getStateDisplay(BlackjackGame.GameState state) {
+        switch (state) {
+            case PLAYING: return "En cours";
+            case DEALER_TURN: return "Tour du dealer";
+            case PLAYER_BLACKJACK: return "Blackjack!";
+            case PLAYER_BUSTED: return "Bust!";
+            case DEALER_BUSTED: return "Dealer Bust";
+            case PLAYER_WIN: return "Victoire!";
+            case DEALER_WIN: return "Défaite";
+            case PUSH: return "Égalité";
+            default: return "Inconnu";
+        }
     }
 }

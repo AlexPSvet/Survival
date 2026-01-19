@@ -22,5 +22,10 @@ public enum TransactionType {
     BOUNTY_REFUND,
     JOB_REWARD,
     GAMBLE,
+    GAMBLE_BET,
+    GAMBLE_WIN,
+    GAMBLE_LOSS,
+    HOME_SET,
+    HOME_TELEPORT,
     OTHER
 }

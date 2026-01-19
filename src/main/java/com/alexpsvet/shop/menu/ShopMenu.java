@@ -27,8 +27,12 @@ public class ShopMenu {
 
     private final Menu shopMenu;
     private final HashMap<String, Menu> categoryMenu;
+    private final int leftClickAmount;
+    private final int rightClickAmount;
 
     public ShopMenu(Collection<ShopCategory> categories) {
+        this.leftClickAmount = Survival.getInstance().getConfig().getInt("shop.left-click-amount", 64);
+        this.rightClickAmount = Survival.getInstance().getConfig().getInt("shop.right-click-amount", 128);
         this.shopMenu = createShopMenu();
         this.categoryMenu = createCategoryMenus(categories);
     }
@@ -100,11 +104,18 @@ public class ShopMenu {
                         lore.add(MessageUtil.colorize(line));
                     }
                     lore.add("");
-                    lore.add(MessageUtil.colorize("&7Prix: &e" + shopItem.getPrice() + " " + currency));
-                    lore.add(MessageUtil.colorize("&7Quantité: &ex" + shopItem.getAmount()));
+                    lore.add(MessageUtil.colorize("&7Prix unitaire: &e" + shopItem.getPrice() + " " + currency));
                     lore.add("");
-                    lore.add(MessageUtil.colorize("&aClick gauche: &fAcheter x64"));
-                    lore.add(MessageUtil.colorize("&aClick droit: &fAcheter x128"));
+                    lore.add(MessageUtil.colorize("&aClick gauche: &fAcheter x" + leftClickAmount + " &7(&e" + 
+                        (shopItem.getPriceFor(leftClickAmount)) + " " + currency + "&7)"));
+                    lore.add(MessageUtil.colorize("&aClick droit: &fAcheter x" + rightClickAmount + " &7(&e" + 
+                        (shopItem.getPriceFor(rightClickAmount)) + " " + currency + "&7)"));
+                    
+                    if (shopItem.getPermission() != null) {
+                        lore.add("");
+                        lore.add(MessageUtil.colorize("&5Permission requise!"));
+                    }
+                    
                     meta.setLore(lore);
                     item.setItemMeta(meta);
                 }
@@ -114,8 +125,8 @@ public class ShopMenu {
                     .slot(slot++)
                     .item(item)
                     .onClick((p, clickType) -> {
-                        int amountStacks = clickType == ClickType.RIGHT ? 2 : 1;
-                        buyItem(p, finalItem, amountStacks);
+                        int amount = clickType == ClickType.RIGHT ? rightClickAmount : leftClickAmount;
+                        buyItem(p, finalItem, amount);
                     })
                     .build());
             }
@@ -157,11 +168,17 @@ public class ShopMenu {
     /**
      * Buy an item from the shop
      */
-    private void buyItem(Player player, ShopItem shopItem, int amountStacks) {
+    private void buyItem(Player player, ShopItem shopItem, int amount) {
         EconomyManager eco = Survival.getInstance().getEconomyManager();
         String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
         
-        double totalPrice = shopItem.getPrice() * amountStacks;
+        // Check permission
+        if (shopItem.getPermission() != null && !player.hasPermission(shopItem.getPermission())) {
+            MessageUtil.sendError(player, "Vous n'avez pas la permission d'acheter cet item!");
+            return;
+        }
+        
+        double totalPrice = shopItem.getPriceFor(amount);
         
         // Check balance
         if (eco.getBalance(player.getUniqueId()) < totalPrice) {
@@ -182,15 +199,14 @@ public class ShopMenu {
         }
         
         // Give items
-        ItemStack item = shopItem.createItemStack();
-        item.setAmount(amountStacks * 64);
+        ItemStack item = shopItem.createItemStack(amount);
         player.getInventory().addItem(item);
         
         // Record transaction
         eco.addTransaction(player.getUniqueId(), TransactionType.SHOP_PURCHASE, -totalPrice, 
-            "Achat: " + shopItem.getDisplayName() + " x" + (amountStacks * 64));
+            "Achat: " + shopItem.getDisplayName() + " x" + amount);
         
-        MessageUtil.sendSuccess(player, "Vous avez acheté &e" + shopItem.getDisplayName() + " x" + (amountStacks * 64) + 
+        MessageUtil.sendSuccess(player, "Vous avez acheté &e" + shopItem.getDisplayName() + " x" + amount + 
             " &apour &e" + totalPrice + " " + currency);
     }
 }

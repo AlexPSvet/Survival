@@ -1,6 +1,7 @@
 # ==================================
 # Jobs Configuration
 # Définir les métiers disponibles
+# Earnings have been reduced to make money harder to obtain
 # ==================================
 
 jobs:
@@ -10,20 +11,20 @@ jobs:
     icon: DIAMOND_PICKAXE
     max-level: 100
     
-    # Récompenses de base pour chaque action
+    # Récompenses de base pour chaque action (REDUCED)
     rewards:
-      MINE_STONE: 1.0
-      MINE_COAL_ORE: 3.0
-      MINE_IRON_ORE: 5.0
-      MINE_GOLD_ORE: 8.0
-      MINE_DIAMOND_ORE: 15.0
-      MINE_EMERALD_ORE: 20.0
-      MINE_LAPIS_ORE: 4.0
-      MINE_REDSTONE_ORE: 3.0
-      MINE_DEEPSLATE_COAL_ORE: 4.0
-      MINE_DEEPSLATE_IRON_ORE: 6.0
-      MINE_DEEPSLATE_GOLD_ORE: 10.0
-      MINE_DEEPSLATE_DIAMOND_ORE: 18.0
+      MINE_STONE: 0.5
+      MINE_COAL_ORE: 1.5
+      MINE_IRON_ORE: 2.5
+      MINE_GOLD_ORE: 4.0
+      MINE_DIAMOND_ORE: 8.0
+      MINE_EMERALD_ORE: 10.0
+      MINE_LAPIS_ORE: 2.0
+      MINE_REDSTONE_ORE: 1.5
+      MINE_DEEPSLATE_COAL_ORE: 2.0
+      MINE_DEEPSLATE_IRON_ORE: 3.0
+      MINE_DEEPSLATE_GOLD_ORE: 5.0
+      MINE_DEEPSLATE_DIAMOND_ORE: 10.0
     
     # Configuration des niveaux (multiplicateur de gain et expérience requise)
     levels:
@@ -31,26 +32,26 @@ jobs:
         multiplier: 1.0
         experience: 0
       5:
-        multiplier: 1.2
-        experience: 500
-      10:
-        multiplier: 1.5
+        multiplier: 1.1
         experience: 1000
-      20:
-        multiplier: 2.0
+      10:
+        multiplier: 1.2
         experience: 2500
+      20:
+        multiplier: 1.4
+        experience: 6000
       30:
-        multiplier: 2.5
-        experience: 5000
+        multiplier: 1.6
+        experience: 12000
       50:
-        multiplier: 3.0
-        experience: 10000
-      75:
-        multiplier: 4.0
+        multiplier: 2.0
         experience: 25000
-      100:
-        multiplier: 5.0
+      75:
+        multiplier: 2.5
         experience: 50000
+      100:
+        multiplier: 3.0
+        experience: 100000
   
   woodcutter:
     name: "Bûcheron"
@@ -59,38 +60,38 @@ jobs:
     max-level: 100
     
     rewards:
-      CUT_OAK_LOG: 2.0
-      CUT_SPRUCE_LOG: 2.0
-      CUT_BIRCH_LOG: 2.0
-      CUT_JUNGLE_LOG: 2.5
-      CUT_ACACIA_LOG: 2.5
-      CUT_DARK_OAK_LOG: 3.0
+      CUT_OAK_LOG: 1.0
+      CUT_SPRUCE_LOG: 1.0
+      CUT_BIRCH_LOG: 1.0
+      CUT_JUNGLE_LOG: 1.2
+      CUT_ACACIA_LOG: 1.2
+      CUT_DARK_OAK_LOG: 1.5
     
     levels:
       1:
         multiplier: 1.0
         experience: 0
       5:
-        multiplier: 1.2
-        experience: 400
-      10:
-        multiplier: 1.5
+        multiplier: 1.1
         experience: 800
-      20:
-        multiplier: 2.0
+      10:
+        multiplier: 1.2
         experience: 2000
+      20:
+        multiplier: 1.4
+        experience: 5000
       30:
-        multiplier: 2.5
-        experience: 4000
+        multiplier: 1.6
+        experience: 10000
       50:
-        multiplier: 3.0
-        experience: 8000
-      75:
-        multiplier: 4.0
+        multiplier: 2.0
         experience: 20000
-      100:
-        multiplier: 5.0
+      75:
+        multiplier: 2.5
         experience: 40000
+      100:
+        multiplier: 3.0
+        experience: 80000
   
   farmer:
     name: "Fermier"
@@ -99,43 +100,43 @@ jobs:
     max-level: 100
     
     rewards:
-      HARVEST_WHEAT: 1.5
-      HARVEST_CARROT: 1.5
-      HARVEST_POTATO: 1.5
-      HARVEST_BEETROOT: 2.0
-      HARVEST_MELON: 2.5
-      HARVEST_PUMPKIN: 2.5
-      HARVEST_SUGAR_CANE: 1.0
-      BREED_COW: 5.0
-      BREED_SHEEP: 5.0
-      BREED_PIG: 5.0
-      BREED_CHICKEN: 4.0
+      HARVEST_WHEAT: 0.8
+      HARVEST_CARROT: 0.8
+      HARVEST_POTATO: 0.8
+      HARVEST_BEETROOT: 1.0
+      HARVEST_MELON: 1.2
+      HARVEST_PUMPKIN: 1.2
+      HARVEST_SUGAR_CANE: 0.5
+      BREED_COW: 3.0
+      BREED_SHEEP: 3.0
+      BREED_PIG: 3.0
+      BREED_CHICKEN: 2.5
     
     levels:
       1:
         multiplier: 1.0
         experience: 0
       5:
-        multiplier: 1.2
-        experience: 400
-      10:
-        multiplier: 1.5
+        multiplier: 1.1
         experience: 800
-      20:
-        multiplier: 2.0
+      10:
+        multiplier: 1.2
         experience: 2000
+      20:
+        multiplier: 1.4
+        experience: 5000
       30:
-        multiplier: 2.5
-        experience: 4000
+        multiplier: 1.6
+        experience: 10000
       50:
-        multiplier: 3.0
-        experience: 8000
-      75:
-        multiplier: 4.0
+        multiplier: 2.0
         experience: 20000
-      100:
-        multiplier: 5.0
+      75:
+        multiplier: 2.5
         experience: 40000
+      100:
+        multiplier: 3.0
+        experience: 80000
   
   hunter:
     name: "Chasseur"
@@ -144,42 +145,42 @@ jobs:
     max-level: 100
     
     rewards:
-      KILL_ZOMBIE: 3.0
-      KILL_SKELETON: 3.5
-      KILL_CREEPER: 4.0
-      KILL_SPIDER: 3.0
-      KILL_ENDERMAN: 8.0
-      KILL_WITCH: 10.0
-      KILL_BLAZE: 12.0
-      KILL_WITHER_SKELETON: 15.0
-      KILL_PIGLIN: 6.0
-      KILL_HOGLIN: 7.0
+      KILL_ZOMBIE: 1.5
+      KILL_SKELETON: 1.8
+      KILL_CREEPER: 2.0
+      KILL_SPIDER: 1.5
+      KILL_ENDERMAN: 4.0
+      KILL_WITCH: 5.0
+      KILL_BLAZE: 6.0
+      KILL_WITHER_SKELETON: 8.0
+      KILL_PIGLIN: 3.0
+      KILL_HOGLIN: 3.5
     
     levels:
       1:
         multiplier: 1.0
         experience: 0
       5:
-        multiplier: 1.2
-        experience: 500
-      10:
-        multiplier: 1.5
+        multiplier: 1.1
         experience: 1000
-      20:
-        multiplier: 2.0
+      10:
+        multiplier: 1.2
         experience: 2500
+      20:
+        multiplier: 1.4
+        experience: 6000
       30:
-        multiplier: 2.5
-        experience: 5000
+        multiplier: 1.6
+        experience: 12000
       50:
-        multiplier: 3.0
-        experience: 10000
-      75:
-        multiplier: 4.0
+        multiplier: 2.0
         experience: 25000
-      100:
-        multiplier: 5.0
+      75:
+        multiplier: 2.5
         experience: 50000
+      100:
+        multiplier: 3.0
+        experience: 100000
   
   fisherman:
     name: "Pêcheur"
@@ -188,34 +189,34 @@ jobs:
     max-level: 100
     
     rewards:
-      CATCH_FISH: 2.0
-      CATCH_TREASURE: 15.0
+      CATCH_FISH: 1.0
+      CATCH_TREASURE: 7.5
     
     levels:
       1:
         multiplier: 1.0
         experience: 0
       5:
-        multiplier: 1.2
-        experience: 300
-      10:
-        multiplier: 1.5
+        multiplier: 1.1
         experience: 600
-      20:
-        multiplier: 2.0
+      10:
+        multiplier: 1.2
         experience: 1500
+      20:
+        multiplier: 1.4
+        experience: 3500
       30:
-        multiplier: 2.5
-        experience: 3000
+        multiplier: 1.6
+        experience: 7000
       50:
-        multiplier: 3.0
-        experience: 6000
-      75:
-        multiplier: 4.0
+        multiplier: 2.0
         experience: 15000
-      100:
-        multiplier: 5.0
+      75:
+        multiplier: 2.5
         experience: 30000
+      100:
+        multiplier: 3.0
+        experience: 60000
   
   builder:
     name: "Bâtisseur"
@@ -224,31 +225,31 @@ jobs:
     max-level: 100
     
     rewards:
-      PLACE_BLOCK: 0.5
-      CRAFT_ITEM: 1.0
+      PLACE_BLOCK: 0.25
+      CRAFT_ITEM: 0.5
     
     levels:
       1:
         multiplier: 1.0
         experience: 0
       5:
-        multiplier: 1.2
-        experience: 600
-      10:
-        multiplier: 1.5
+        multiplier: 1.1
         experience: 1200
-      20:
-        multiplier: 2.0
+      10:
+        multiplier: 1.2
         experience: 3000
+      20:
+        multiplier: 1.4
+        experience: 7000
       30:
-        multiplier: 2.5
-        experience: 6000
+        multiplier: 1.6
+        experience: 15000
       50:
-        multiplier: 3.0
-        experience: 12000
-      75:
-        multiplier: 4.0
+        multiplier: 2.0
         experience: 30000
-      100:
-        multiplier: 5.0
+      75:
+        multiplier: 2.5
         experience: 60000
+      100:
+        multiplier: 3.0
+        experience: 120000
