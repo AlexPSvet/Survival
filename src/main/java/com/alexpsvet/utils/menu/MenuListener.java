@@ -1,5 +1,6 @@
 package com.alexpsvet.utils.menu;
 
+import com.alexpsvet.gamble.GambleMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -84,6 +85,15 @@ public class MenuListener implements Listener {
         }
         
         Player player = (Player) event.getPlayer();
+        Menu menu = (Menu) holder;
+        
+        // Check if this is a gamble menu and player is in active game
+        if (GambleMenu.isPlayerInActiveGame(player)) {
+            // Remove the bet and send message to player
+            GambleMenu.handlePlayerLeaveGame(player);
+            player.sendMessage("§cYou have left the gamble game and lost your bet.");
+            return;
+        }
         
         // Unregister the menu from the player
         MenuManager.getInstance().closeMenu(player);

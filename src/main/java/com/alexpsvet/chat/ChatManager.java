@@ -1,8 +1,10 @@
 package com.alexpsvet.chat;
 
 import com.alexpsvet.Survival;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,8 +82,21 @@ public class ChatManager {
      * @param player the player UUID
      * @return the target UUID, or null
      */
-    public UUID getReplyTarget(UUID player) {
+    public UUID getReplyTargetUUID(UUID player) {
         return replyTargets.get(player);
+    }
+    
+    /**
+     * Get reply target player for a player
+     * @param player the player UUID
+     * @return the target Player, or null if offline or doesn't exist
+     */
+    public Player getReplyTarget(UUID player) {
+        UUID targetUUID = replyTargets.get(player);
+        if (targetUUID == null) {
+            return null;
+        }
+        return Bukkit.getPlayer(targetUUID);
     }
     
     /**

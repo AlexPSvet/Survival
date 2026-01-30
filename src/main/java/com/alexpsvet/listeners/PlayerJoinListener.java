@@ -4,6 +4,7 @@ import com.alexpsvet.Survival;
 import com.alexpsvet.display.ScoreboardManager;
 import com.alexpsvet.display.TabManager;
 import com.alexpsvet.economy.EconomyManager;
+import com.alexpsvet.gamble.GambleMenu;
 import com.alexpsvet.player.PlayerStatsManager;
 import com.alexpsvet.territory.TerritoryDisplayManager;
 import com.alexpsvet.utils.MessageUtil;
@@ -122,6 +123,9 @@ public class PlayerJoinListener implements Listener {
     
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        // Handle gamble game disconnect (charge as loss if in active game)
+        GambleMenu.handlePlayerLeaveGame(event.getPlayer());
+        
         // Clean up territory display manager data
         TerritoryDisplayManager territoryDisplayManager = Survival.getInstance().getTerritoryDisplayManager();
         if (territoryDisplayManager != null) {

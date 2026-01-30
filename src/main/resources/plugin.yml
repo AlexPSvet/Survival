@@ -77,6 +77,10 @@ commands:
   delhome:
     description: Supprimer un home
     usage: /delhome <nom>
+  trade:
+    description: Échanger des items et de l'argent avec un autre joueur
+    usage: /trade <joueur>
+    aliases: [echange, echanger]
 
 permissions:
   survival.economy.admin:

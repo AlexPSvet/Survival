@@ -1,8 +1,6 @@
 package com.alexpsvet.shop.menu;
 
 import com.alexpsvet.Survival;
-import com.alexpsvet.economy.EconomyManager;
-import com.alexpsvet.economy.TransactionType;
 import com.alexpsvet.shop.ShopCategory;
 import com.alexpsvet.shop.ShopItem;
 import com.alexpsvet.shop.ShopManager;
@@ -11,13 +9,13 @@ import com.alexpsvet.utils.menu.Button;
 import com.alexpsvet.utils.menu.Menu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.List;
 
 /**
@@ -27,12 +25,8 @@ public class ShopMenu {
 
     private final Menu shopMenu;
     private final HashMap<String, Menu> categoryMenu;
-    private final int leftClickAmount;
-    private final int rightClickAmount;
 
     public ShopMenu(Collection<ShopCategory> categories) {
-        this.leftClickAmount = Survival.getInstance().getConfig().getInt("shop.left-click-amount", 64);
-        this.rightClickAmount = Survival.getInstance().getConfig().getInt("shop.right-click-amount", 128);
         this.shopMenu = createShopMenu();
         this.categoryMenu = createCategoryMenus(categories);
     }
@@ -62,6 +56,26 @@ public class ShopMenu {
                 .onClick((p, clickType) -> openCategoryMenu(p, category.getId()))
                 .build());
         }
+        
+        // Sell items button
+        ItemStack sellButton = new ItemStack(Material.EMERALD);
+        ItemMeta sellMeta = sellButton.getItemMeta();
+        if (sellMeta != null) {
+            sellMeta.setDisplayName(MessageUtil.colorize("&a&lVendre des Items"));
+            List<String> sellLore = new ArrayList<>();
+            sellLore.add(MessageUtil.colorize("&7Vendez vos items à la boutique"));
+            sellLore.add(MessageUtil.colorize("&7et gagnez de l'argent!"));
+            sellLore.add("");
+            sellLore.add(MessageUtil.colorize("&eCliquez pour vendre!"));
+            sellMeta.setLore(sellLore);
+            sellButton.setItemMeta(sellMeta);
+        }
+        
+        builder.button(new Button.Builder()
+            .slot(48)
+            .item(sellButton)
+            .onClick((p, clickType) -> ShopSellMenu.openSellMenu(p))
+            .build());
 
         // Close button
         ItemStack close = new ItemStack(Material.BARRIER);
@@ -105,11 +119,11 @@ public class ShopMenu {
                     }
                     lore.add("");
                     lore.add(MessageUtil.colorize("&7Prix unitaire: &e" + shopItem.getPrice() + " " + currency));
+                    if (shopItem.canSell()) {
+                        lore.add(MessageUtil.colorize("&7Prix de vente: &a" + shopItem.getSellPrice() + " " + currency));
+                    }
                     lore.add("");
-                    lore.add(MessageUtil.colorize("&aClick gauche: &fAcheter x" + leftClickAmount + " &7(&e" + 
-                        (shopItem.getPriceFor(leftClickAmount)) + " " + currency + "&7)"));
-                    lore.add(MessageUtil.colorize("&aClick droit: &fAcheter x" + rightClickAmount + " &7(&e" + 
-                        (shopItem.getPriceFor(rightClickAmount)) + " " + currency + "&7)"));
+                    lore.add(MessageUtil.colorize("&eCliquez pour voir les options d'achat!"));
                     
                     if (shopItem.getPermission() != null) {
                         lore.add("");
@@ -121,12 +135,12 @@ public class ShopMenu {
                 }
                 
                 final ShopItem finalItem = shopItem;
+                final String categoryId = category.getId();
                 builder.button(new Button.Builder()
                     .slot(slot++)
                     .item(item)
                     .onClick((p, clickType) -> {
-                        int amount = clickType == ClickType.RIGHT ? rightClickAmount : leftClickAmount;
-                        buyItem(p, finalItem, amount);
+                        ShopBuyMenu.open(p, finalItem, categoryId);
                     })
                     .build());
             }
@@ -163,50 +177,5 @@ public class ShopMenu {
      */
     public void openCategoryMenu(Player player, String id) {
         categoryMenu.get(id).open(player);
-    }
-    
-    /**
-     * Buy an item from the shop
-     */
-    private void buyItem(Player player, ShopItem shopItem, int amount) {
-        EconomyManager eco = Survival.getInstance().getEconomyManager();
-        String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
-        
-        // Check permission
-        if (shopItem.getPermission() != null && !player.hasPermission(shopItem.getPermission())) {
-            MessageUtil.sendError(player, "Vous n'avez pas la permission d'acheter cet item!");
-            return;
-        }
-        
-        double totalPrice = shopItem.getPriceFor(amount);
-        
-        // Check balance
-        if (eco.getBalance(player.getUniqueId()) < totalPrice) {
-            MessageUtil.sendError(player, "Vous n'avez pas assez d'argent! Il vous faut " + totalPrice + " " + currency);
-            return;
-        }
-        
-        // Check inventory space
-        if (player.getInventory().firstEmpty() == -1) {
-            MessageUtil.sendError(player, "Votre inventaire est plein!");
-            return;
-        }
-        
-        // Remove money
-        if (!eco.removeBalance(player.getUniqueId(), totalPrice)) {
-            MessageUtil.sendError(player, "Erreur lors de la transaction!");
-            return;
-        }
-        
-        // Give items
-        ItemStack item = shopItem.createItemStack(amount);
-        player.getInventory().addItem(item);
-        
-        // Record transaction
-        eco.addTransaction(player.getUniqueId(), TransactionType.SHOP_PURCHASE, -totalPrice, 
-            "Achat: " + shopItem.getDisplayName() + " x" + amount);
-        
-        MessageUtil.sendSuccess(player, "Vous avez acheté &e" + shopItem.getDisplayName() + " x" + amount + 
-            " &apour &e" + totalPrice + " " + currency);
     }
 }

@@ -116,6 +116,27 @@ public class TerritoryConfigMenu {
             })
             .build());
         
+        // Particle Border Toggle
+        builder.button(new Button.Builder()
+            .slot(16)
+            .item(createFlagItem(
+                Material.END_ROD,
+                "&d&lBordure de Particules",
+                territory.isShowingParticleBorder(),
+                "Afficher en permanence les limites du territoire"
+            ))
+            .onClick((p, clickType) -> {
+                boolean newState = !territory.isShowingParticleBorder();
+                territory.setShowingParticleBorder(newState);
+                if (newState) {
+                    Survival.getInstance().getTerritoryDisplayManager().startPermanentBorderDisplay(p, territory);
+                } else {
+                    Survival.getInstance().getTerritoryDisplayManager().stopPermanentBorderDisplay(p, territory);
+                }
+                open(p, territory);
+            })
+            .build());
+        
         // Trusted Players Management
         builder.button(new Button.Builder()
             .slot(30)

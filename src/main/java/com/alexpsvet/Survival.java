@@ -29,6 +29,7 @@ import com.alexpsvet.commands.EconomyAdminCommand;
 import com.alexpsvet.commands.ClanCommand;
 import com.alexpsvet.commands.AuctionCommand;
 import com.alexpsvet.commands.TeleportCommand;
+import com.alexpsvet.commands.TradeCommand;
 import com.alexpsvet.commands.ShopCommand;
 import com.alexpsvet.commands.ProtectionCommand;
 import com.alexpsvet.commands.GuideCommand;
@@ -37,6 +38,9 @@ import com.alexpsvet.commands.BountyCommand;
 import com.alexpsvet.commands.JobsCommand;
 import com.alexpsvet.commands.GambleCommand;
 import com.alexpsvet.commands.HomeCommand;
+import com.alexpsvet.commands.TradeCommand;
+import com.alexpsvet.commands.MessageCommand;
+import com.alexpsvet.trade.TradeManager;
 import com.alexpsvet.listeners.PlayerJoinListener;
 import com.alexpsvet.listeners.ClanListener;
 import com.alexpsvet.listeners.ClanWarListener;
@@ -45,6 +49,8 @@ import com.alexpsvet.listeners.TerritoryListener;
 import com.alexpsvet.listeners.StatsListener;
 import com.alexpsvet.bounty.BountyListener;
 import com.alexpsvet.jobs.JobsListener;
+import com.alexpsvet.rpgmobs.RPGMobManager;
+import com.alexpsvet.rpgmobs.RPGMobListener;
 
 /*
  * survival java plugin
@@ -69,6 +75,7 @@ public class Survival extends JavaPlugin {
   private ScoreboardManager scoreboardManager;
   private TabManager tabManager;
   private SalaryTask salaryTask;
+  private RPGMobManager rpgMobManager;
 
   @Override
   public void onEnable() {
@@ -104,6 +111,16 @@ public class Survival extends JavaPlugin {
     homeManager = new HomeManager(database);
     scoreboardManager = new ScoreboardManager();
     tabManager = new TabManager();
+    rpgMobManager = new RPGMobManager();
+    
+    // Initialize trade manager
+    TradeManager.getInstance();
+    
+    // Initialize shop sell menu (registers listener)
+    new com.alexpsvet.shop.menu.ShopSellMenu();
+    
+    // Initialize trade menu (registers listener)
+    new com.alexpsvet.trade.menu.TradeMenu();
     
     // Register listeners
     getServer().getPluginManager().registerEvents(new MenuListener(), this);
@@ -115,6 +132,7 @@ public class Survival extends JavaPlugin {
     getServer().getPluginManager().registerEvents(new StatsListener(), this);
     getServer().getPluginManager().registerEvents(new BountyListener(), this);
     getServer().getPluginManager().registerEvents(new JobsListener(), this);
+    getServer().getPluginManager().registerEvents(new RPGMobListener(rpgMobManager), this);
     
     // Register commands
     EconomyCommand economyCommand = new EconomyCommand();
@@ -170,6 +188,15 @@ public class Survival extends JavaPlugin {
     getCommand("sethome").setTabCompleter(homeCommand);
     getCommand("delhome").setExecutor(homeCommand);
     getCommand("delhome").setTabCompleter(homeCommand);
+    
+    TradeCommand tradeCommand = new TradeCommand();
+    getCommand("trade").setExecutor(tradeCommand);
+    getCommand("trade").setTabCompleter(tradeCommand);
+    
+    MessageCommand messageCommand = new MessageCommand();
+    getCommand("msg").setExecutor(messageCommand);
+    getCommand("msg").setTabCompleter(messageCommand);
+    getCommand("r").setExecutor(messageCommand);
     
     // Set server motd from config
     String motd = getConfig().getString("server.motd", "Welcome to the Survival Server!");

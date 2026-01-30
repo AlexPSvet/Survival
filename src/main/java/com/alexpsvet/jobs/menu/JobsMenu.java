@@ -157,7 +157,8 @@ public class JobsMenu {
         }
         
         jobLore.add("");
-        jobLore.add(MessageUtil.colorize("&7Multiplicateur actuel: &ax" + job.getLevelMultiplier(playerJob.getLevel())));
+        double currentMultiplier = job.getLevelMultiplier(playerJob.getLevel());
+        jobLore.add(MessageUtil.colorize("&7Multiplicateur actuel: &ax" + String.format("%.2f", currentMultiplier)));
         
         builder.button(new Button.Builder()
             .slot(13)
@@ -194,7 +195,8 @@ public class JobsMenu {
         for (int i = Math.max(1, currentLevel - 2); i <= Math.min(job.getMaxLevel(), currentLevel + 3); i++) {
             String prefix = i == currentLevel ? "&a➤ " : "&7  ";
             double multiplier = job.getLevelMultiplier(i);
-            levelLore.add(MessageUtil.colorize(prefix + "Niveau " + i + ": &ex" + multiplier));
+            String multiplierStr = String.format("%.2f", multiplier);
+            levelLore.add(MessageUtil.colorize(prefix + "Niveau " + i + ": &ex" + multiplierStr));
         }
         
         builder.button(new Button.Builder()

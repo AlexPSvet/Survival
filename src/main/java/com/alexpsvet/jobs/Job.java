@@ -66,7 +66,42 @@ public class Job {
     }
     
     public double getLevelMultiplier(int level) {
-        return levelMultipliers.getOrDefault(level, 1.0);
+        // If we have an exact multiplier for this level, return it
+        if (levelMultipliers.containsKey(level)) {
+            return levelMultipliers.get(level);
+        }
+        
+        // Otherwise, interpolate between the closest defined levels
+        // Find the two surrounding levels
+        int lowerLevel = 1;
+        int upperLevel = maxLevel;
+        double lowerMultiplier = 1.0;
+        double upperMultiplier = 1.0;
+        
+        for (int definedLevel : levelMultipliers.keySet()) {
+            if (definedLevel <= level && definedLevel > lowerLevel) {
+                lowerLevel = definedLevel;
+                lowerMultiplier = levelMultipliers.get(definedLevel);
+            }
+            if (definedLevel > level && definedLevel < upperLevel) {
+                upperLevel = definedLevel;
+                upperMultiplier = levelMultipliers.get(definedLevel);
+            }
+        }
+        
+        // If we're at or below the lowest defined level, return that multiplier
+        if (level <= lowerLevel) {
+            return lowerMultiplier;
+        }
+        
+        // If we're at or above the highest defined level, return that multiplier
+        if (level >= upperLevel) {
+            return upperMultiplier;
+        }
+        
+        // Linear interpolation between the two surrounding levels
+        double ratio = (double) (level - lowerLevel) / (upperLevel - lowerLevel);
+        return lowerMultiplier + ratio * (upperMultiplier - lowerMultiplier);
     }
     
     public void setExperienceRequired(int level, double experience) {

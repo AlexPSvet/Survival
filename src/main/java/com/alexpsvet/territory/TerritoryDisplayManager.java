@@ -2,6 +2,7 @@ package com.alexpsvet.territory;
 
 import com.alexpsvet.Survival;
 import com.alexpsvet.chat.ChatManager;
+import com.alexpsvet.utils.MessageUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -33,6 +34,9 @@ public class TerritoryDisplayManager {
     // Track boss bars for each player
     private final Map<UUID, BossBar> playerBossBars;
     
+    // Track permanent border displays: Player UUID -> Territory ID -> Task ID
+    private final Map<UUID, Map<Integer, BukkitTask>> permanentBorderTasks;
+    
     // Task for periodic checking
     private BukkitRunnable checkTask;
     
@@ -42,6 +46,7 @@ public class TerritoryDisplayManager {
         this.chatManager = ChatManager.getInstance();
         this.playerTerritories = new HashMap<>();
         this.playerBossBars = new HashMap<>();
+        this.permanentBorderTasks = new HashMap<>();
         
         startCheckTask();
     }
@@ -253,6 +258,117 @@ public class TerritoryDisplayManager {
         UUID playerId = player.getUniqueId();
         playerTerritories.remove(playerId);
         removeBossBar(player);
+        stopAllPermanentBorderDisplays(player);
+    }
+    
+    /**
+     * Start permanent border display for a territory
+     */
+    public void startPermanentBorderDisplay(Player player, Territory territory) {
+        UUID playerId = player.getUniqueId();
+        int territoryId = territory.getId();
+        
+        // Stop any existing display for this territory
+        stopPermanentBorderDisplay(player, territory);
+        
+        // Create periodic task to show particles
+        BukkitTask task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!player.isOnline()) {
+                    cancel();
+                    return;
+                }
+                
+                // Check if player is too far from territory
+                Location playerLoc = player.getLocation();
+                Location territoryCenter = territory.getCenter();
+                
+                // Auto-disable if player is more than radius + 50 blocks away from center
+                double maxDistance = territory.getRadius() + 50;
+                if (!playerLoc.getWorld().equals(territoryCenter.getWorld()) || 
+                    playerLoc.distance(territoryCenter) > maxDistance) {
+                    territory.setShowingParticleBorder(false);
+                    stopPermanentBorderDisplay(player, territory);
+                    MessageUtil.sendMessage(player, MessageUtil.colorize("&7Bordure de particules désactivée (trop éloigné)"));
+                    return;
+                }
+                
+                // Display the border
+                displayTerritoryBorder(player, territory);
+            }
+        }.runTaskTimer(plugin, 0L, 10L); // Every 10 ticks (0.5 seconds)
+        
+        // Store the task
+        permanentBorderTasks.computeIfAbsent(playerId, k -> new HashMap<>()).put(territoryId, task);
+    }
+    
+    /**
+     * Stop permanent border display for a territory
+     */
+    public void stopPermanentBorderDisplay(Player player, Territory territory) {
+        UUID playerId = player.getUniqueId();
+        int territoryId = territory.getId();
+        
+        Map<Integer, BukkitTask> playerTasks = permanentBorderTasks.get(playerId);
+        if (playerTasks != null) {
+            BukkitTask task = playerTasks.remove(territoryId);
+            if (task != null) {
+                task.cancel();
+            }
+            if (playerTasks.isEmpty()) {
+                permanentBorderTasks.remove(playerId);
+            }
+        }
+    }
+    
+    /**
+     * Stop all permanent border displays for a player
+     */
+    public void stopAllPermanentBorderDisplays(Player player) {
+        UUID playerId = player.getUniqueId();
+        Map<Integer, BukkitTask> playerTasks = permanentBorderTasks.remove(playerId);
+        if (playerTasks != null) {
+            for (BukkitTask task : playerTasks.values()) {
+                task.cancel();
+            }
+        }
+    }
+    
+    /**
+     * Display territory border particles
+     */
+    private void displayTerritoryBorder(Player player, Territory territory) {
+        Location center = territory.getCenter();
+        int radius = territory.getRadius();
+        Location playerLoc = player.getLocation();
+        
+        // Draw circle at multiple Y levels around the border
+        int minY = center.getBlockY() - radius;
+        int maxY = center.getBlockY() + radius;
+        
+        // Sample Y levels (every 5 blocks)
+        for (int y = minY; y <= maxY; y += 5) {
+            // Draw horizontal circle at this Y level
+            for (double angle = 0; angle < 360; angle += 10) {
+                double radians = Math.toRadians(angle);
+                double x = center.getX() + (radius * Math.cos(radians));
+                double z = center.getZ() + (radius * Math.sin(radians));
+                
+                Location particleLoc = new Location(center.getWorld(), x, y, z);
+                
+                // Only show if within reasonable distance from player
+                if (particleLoc.distance(playerLoc) < 70) {
+                    player.spawnParticle(
+                        Particle.END_ROD,
+                        particleLoc,
+                        1,
+                        0, 0, 0,
+                        0
+                    );
+                }
+            }
+        }
     }
     
     /**
@@ -262,6 +378,14 @@ public class TerritoryDisplayManager {
         if (checkTask != null) {
             checkTask.cancel();
         }
+        
+        // Cancel all permanent border tasks
+        for (Map<Integer, BukkitTask> playerTasks : permanentBorderTasks.values()) {
+            for (BukkitTask task : playerTasks.values()) {
+                task.cancel();
+            }
+        }
+        permanentBorderTasks.clear();
         
         // Remove all boss bars
         for (BossBar bossBar : playerBossBars.values()) {

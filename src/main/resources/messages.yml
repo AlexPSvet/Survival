@@ -112,6 +112,8 @@ territory:
   claimed: "&aTerritory réclamé pour le clan &e{clan}&a!"
   unclaimed: "&cTerritory libéré!"
   already-claimed: "&cCe territoire est déjà réclamé!"
+  collision: "&cCe bloc de protection chevauche une zone existante!"
+  not-owner: "&cSeul le propriétaire peut retirer ce bloc de protection!"
   not-in-clan: "&cVous devez être dans un clan!"
   no-permission: "&cVous n'avez pas la permission dans cette zone!"
   pvp-disabled: "&cLe PvP est désactivé dans ce territoire!"

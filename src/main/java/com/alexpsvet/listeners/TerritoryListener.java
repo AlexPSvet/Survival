@@ -30,15 +30,26 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class TerritoryListener implements Listener {
     
-    private static final Material PROTECTION_BLOCK = Material.SPONGE; // Configurable protection block
+    private static final Material PROTECTION_BLOCK_SMALL = Material.SPONGE;
+    private static final Material PROTECTION_BLOCK_MEDIUM = Material.GOLD_BLOCK;
+    private static final Material PROTECTION_BLOCK_LARGE = Material.DIAMOND_BLOCK;
     
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlock();
         
-        // Check if placing a protection block
-        if (block.getType() == PROTECTION_BLOCK) {
+        // Check if placing a protection block and determine radius
+        int radius = -1;
+        if (block.getType() == PROTECTION_BLOCK_SMALL) {
+            radius = Survival.getInstance().getConfig().getInt("territory.protection-blocks.small.radius", 10);
+        } else if (block.getType() == PROTECTION_BLOCK_MEDIUM) {
+            radius = Survival.getInstance().getConfig().getInt("territory.protection-blocks.medium.radius", 25);
+        } else if (block.getType() == PROTECTION_BLOCK_LARGE) {
+            radius = Survival.getInstance().getConfig().getInt("territory.protection-blocks.large.radius", 50);
+        }
+        
+        if (radius != -1) {
             TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
             
             // Check if already in a territory
@@ -49,8 +60,15 @@ public class TerritoryListener implements Listener {
                 return;
             }
             
-            // Create territory with default radius
-            int radius = Survival.getInstance().getConfig().getInt("territory.default-radius", 10);
+            // Check if would collide with existing territories
+            if (territoryManager.wouldCollide(block.getLocation(), radius)) {
+                ChatManager chatManager = ChatManager.getInstance();
+                MessageUtil.sendMessage(player, chatManager.getMessage("territory.collision"));
+                event.setCancelled(true);
+                return;
+            }
+            
+            // Create territory
             Territory territory = territoryManager.createTerritoryFromBlock(block, player.getUniqueId(), player.getName(), radius);
             
             if (territory != null) {
@@ -77,12 +95,15 @@ public class TerritoryListener implements Listener {
         TerritoryManager territoryManager = Survival.getInstance().getTerritoryManager();
         
         // Check if breaking a protection block
-        if (block.getType() == PROTECTION_BLOCK) {
+        if (block.getType() == PROTECTION_BLOCK_SMALL || 
+            block.getType() == PROTECTION_BLOCK_MEDIUM || 
+            block.getType() == PROTECTION_BLOCK_LARGE) {
             Territory territory = territoryManager.getTerritoryByBlock(block);
             if (territory != null) {
-                if (!territory.hasPermission(player.getUniqueId())) {
+                // Only owner can remove the protection block
+                if (!territory.getOwner().equals(player.getUniqueId())) {
                     ChatManager chatManager = ChatManager.getInstance();
-                    MessageUtil.sendMessage(player, chatManager.getMessage("territory.no-permission"));
+                    MessageUtil.sendMessage(player, chatManager.getMessage("territory.not-owner"));
                     event.setCancelled(true);
                     return;
                 }

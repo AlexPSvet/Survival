@@ -71,10 +71,11 @@ public class ShopManager {
                         List<String> loreList = itemSection.getStringList("lore");
                         String[] lore = loreList.toArray(new String[0]);
                         double price = itemSection.getDouble("price", 0);
+                        double sellPrice = itemSection.getDouble("sell-price", price * 0.5); // Default to 50% of buy price
                         int amount = itemSection.getInt("amount", 1);
                         String permission = itemSection.getString("permission", null);
                         
-                        ShopItem item = new ShopItem(itemId, material, displayName, lore, price, amount, permission);
+                        ShopItem item = new ShopItem(itemId, material, displayName, lore, price, sellPrice, amount, permission);
                         category.addItem(item);
                     } catch (IllegalArgumentException e) {
                         LOGGER.warning("Invalid material for shop item: " + itemId);

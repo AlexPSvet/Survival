@@ -21,6 +21,7 @@ public class Territory {
     private String clanName; // Optional clan ownership
     private Set<UUID> trusted; // Trusted players
     private TerritoryFlags flags;
+    private boolean showingParticleBorder; // Whether particle border is currently showing
     
     public Territory(int id, UUID owner, String ownerName, Location center, int radius, long createdAt) {
         this.id = id;
@@ -31,6 +32,7 @@ public class Territory {
         this.createdAt = createdAt;
         this.trusted = new HashSet<>();
         this.flags = new TerritoryFlags();
+        this.showingParticleBorder = false;
     }
     
     public int getId() {
@@ -123,5 +125,19 @@ public class Territory {
      */
     public int getSize() {
         return (int) ((4.0 / 3.0) * Math.PI * radius * radius * radius);
+    }
+    
+    /**
+     * Check if particle border is showing
+     */
+    public boolean isShowingParticleBorder() {
+        return showingParticleBorder;
+    }
+    
+    /**
+     * Set whether particle border should be showing
+     */
+    public void setShowingParticleBorder(boolean showing) {
+        this.showingParticleBorder = showing;
     }
 }

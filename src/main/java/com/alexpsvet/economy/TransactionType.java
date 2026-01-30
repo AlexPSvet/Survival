@@ -15,6 +15,7 @@ public enum TransactionType {
     ADMIN_ADD,
     ADMIN_REMOVE,
     SHOP_PURCHASE,
+    SHOP_SELL,
     AUCTION_PURCHASE,
     AUCTION_SALE,
     BOUNTY_PLACE,

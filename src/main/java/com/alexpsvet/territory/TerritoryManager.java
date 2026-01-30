@@ -232,6 +232,32 @@ public class TerritoryManager {
     }
     
     /**
+     * Check if a new territory would collide with any existing territories
+     * @param center the center of the new territory
+     * @param radius the radius of the new territory
+     * @return true if there would be a collision
+     */
+    public boolean wouldCollide(Location center, int radius) {
+        for (Territory territory : territories.values()) {
+            if (!territory.getCenter().getWorld().equals(center.getWorld())) {
+                continue;
+            }
+            
+            // Calculate distance between centers
+            double dx = territory.getCenter().getBlockX() - center.getBlockX();
+            double dy = territory.getCenter().getBlockY() - center.getBlockY();
+            double dz = territory.getCenter().getBlockZ() - center.getBlockZ();
+            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            
+            // Collision if distance between centers is less than sum of radii
+            if (distance < (territory.getRadius() + radius)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Get territory at a location
      */
     public Territory getTerritoryAt(Location location) {

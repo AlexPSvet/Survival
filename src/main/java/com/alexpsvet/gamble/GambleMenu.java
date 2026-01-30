@@ -25,6 +25,49 @@ public class GambleMenu {
     private static final Map<UUID, Double> activeBets = new HashMap<>();
     private static final Map<UUID, CoinSide> activeChoices = new HashMap<>();
     private static final Map<UUID, BlackjackGame> activeBlackjackGames = new HashMap<>();
+    private static final Set<UUID> playersInActiveGame = new HashSet<>(); // Track players actively playing
+    
+    /**
+     * Check if a player is in an active game (prevents menu closing)
+     */
+    public static boolean isPlayerInActiveGame(UUID playerId) {
+        return playersInActiveGame.contains(playerId);
+    }
+    
+    /**
+     * Check if a player is in an active game
+     */
+    public static boolean isPlayerInActiveGame(Player player) {
+        return isPlayerInActiveGame(player.getUniqueId());
+    }
+    
+    /**
+     * Handle player leaving game (disconnect or force close)
+     * Charges them as if they lost
+     */
+    public static void handlePlayerLeaveGame(Player player) {
+        UUID playerId = player.getUniqueId();
+        
+        // Check if player has active blackjack game
+        BlackjackGame game = activeBlackjackGames.remove(playerId);
+        if (game != null && !game.isGameOver()) {
+            // Player left during blackjack game - they lose their bet
+            EconomyManager eco = Survival.getInstance().getEconomyManager();
+            eco.addTransaction(playerId, TransactionType.GAMBLE_LOSS, -game.getBet(), 
+                "Blackjack Loss (Left Game)");
+            
+            if (player.isOnline()) {
+                String currency = Survival.getInstance().getConfig().getString("economy.currency-symbol", "⛁");
+                MessageUtil.sendError(player, "Vous avez quitté la partie! Mise perdue: " + 
+                    game.getBet() + " " + currency);
+            }
+        }
+        
+        // Clean up all game data
+        activeBets.remove(playerId);
+        activeChoices.remove(playerId);
+        playersInActiveGame.remove(playerId);
+    }
     
     public enum CoinSide {
         PILE("Pile", "⛏"),
@@ -513,6 +556,8 @@ public class GambleMenu {
         } else {
             openBlackjackGameMenu(player);
         }
+
+        playersInActiveGame.add(player.getUniqueId()); // Mark player as in active game
     }
     
     /**
@@ -713,6 +758,7 @@ public class GambleMenu {
         
         // Clean up
         activeBlackjackGames.remove(player.getUniqueId());
+        playersInActiveGame.remove(player.getUniqueId()); // Remove from active game tracking
         
         // Reopen menu after 4 seconds
         Bukkit.getScheduler().runTaskLater(Survival.getInstance(), () -> {
